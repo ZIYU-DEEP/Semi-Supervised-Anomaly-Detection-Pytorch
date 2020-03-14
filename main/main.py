@@ -17,7 +17,9 @@ import os
 import argparse
 import numpy as np
 import pandas as pd
-import main_loading, main_network, main_model
+from main_loading import *
+from main_network import *
+from main_model import *
 
 # Most of the time, you only need to specify:
 # normal_filename, abnormal_filename, optimizer_, eta_str, n_epochs
