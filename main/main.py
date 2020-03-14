@@ -51,8 +51,8 @@ parser.add_argument('--eta_str', default=100,
                     help='The _% represenntation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
-parser.add_argument('--n_epochs', type=int, default=200)
-parser.add_argument('--lr_milestones', type=tuple, default=(80, 120))
+parser.add_argument('--n_epochs', type=int, default=250)
+parser.add_argument('--lr_milestones', type=str, default='60_120_180')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
 parser.add_argument('--device_no', type=int, default=1)
@@ -75,7 +75,8 @@ root, normal_file, abnormal_file = p.root, p.normal_file, p.abnormal_file
 random_state, in_size, out_size = p.random_state, p.in_size, p.out_size
 n_features, train_portion, net_name = p.n_features, p.train_portion, p.net_name
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
-lr, n_epochs, lr_milestones, batch_size = p.lr, p.n_epochs, p.lr_milestones, p.batch_size
+lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
+lr_milestones = tuple(int(i) for i in p.lr_miletones.split('_'))
 weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jobs_dataloader
 save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
 test_list_filename, txt_filename = p.test_list_filename, p.txt_filename
