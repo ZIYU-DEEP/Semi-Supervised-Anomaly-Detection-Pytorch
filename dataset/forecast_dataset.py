@@ -105,9 +105,9 @@ class ForecastDataset(Dataset):
             # Concatenating data
             print('Concatenating data!')
             self.X_in = torch.tensor(np.concatenate((X_posi_train_in, X_nega_train_in)),
-                                     dtype=torch.float64)
+                                     dtype=torch.float32)
             self.X_out = torch.tensor(np.concatenate((X_posi_train_out, X_nega_train_out)),
-                                      dtype=torch.float64)
+                                      dtype=torch.float32)
             self.y = torch.tensor(np.concatenate((y_posi_train, y_nega_train)),
                                   dtype=torch.int64)
 
@@ -125,11 +125,11 @@ class ForecastDataset(Dataset):
             # Concatenating data
             print('Concatenating data!')
             self.X_in = torch.tensor(np.concatenate((X_posi_test_in, X_nega_test_in)),
-                                     dtype=torch.float64)
+                                     dtype=torch.float32)
             self.X_out = torch.tensor(np.concatenate((X_posi_test_out, X_nega_test_out)),
-                                      dtype=torch.float64)
+                                      dtype=torch.float32)
             self.y = torch.tensor(np.concatenate((y_posi_test, y_nega_test)),
-                                  dtype=torch.float64)
+                                  dtype=torch.float32)
 
     def __getitem__(self, index):
         X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
@@ -185,8 +185,8 @@ class ForecastDataset_(Dataset):
 
             # Concatenating data
             print('Concatenating data!')
-            self.X_in = torch.tensor(X_nega_train_in, dtype=torch.float64)
-            self.X_out = torch.tensor(X_nega_train_in, dtype=torch.float64)
+            self.X_in = torch.tensor(X_nega_train_in, dtype=torch.float32)
+            self.X_out = torch.tensor(X_nega_train_in, dtype=torch.float32)
             self.y = torch.tensor(y_nega_train, dtype=torch.int64)
 
         if not self.train:
@@ -198,9 +198,9 @@ class ForecastDataset_(Dataset):
 
             # Concatenating data
             print('Concatenating data!')
-            self.X_in = torch.tensor(X_nega_test_in, dtype=torch.float64)
-            self.X_out = torch.tensor(X_nega_test_out, dtype=torch.float64)
-            self.y = torch.tensor(y_nega_test, dtype=torch.float64)
+            self.X_in = torch.tensor(X_nega_test_in, dtype=torch.float32)
+            self.X_out = torch.tensor(X_nega_test_out, dtype=torch.float32)
+            self.y = torch.tensor(y_nega_test, dtype=torch.float32)
 
     def __getitem__(self, index):
         X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
@@ -243,8 +243,8 @@ class ForecastDatasetEval(Dataset):
 
         # Concatenating data
         print('Getting in and out data!')
-        self.X_in = torch.tensor(X_posi_in, dtype=torch.float64)
-        self.X_out = torch.tensor(X_posi_out, dtype=torch.float64)
+        self.X_in = torch.tensor(X_posi_in, dtype=torch.float32)
+        self.X_out = torch.tensor(X_posi_out, dtype=torch.float32)
         self.y = torch.tensor(y_posi, dtype=torch.int64)
 
     def __getitem__(self, index):
