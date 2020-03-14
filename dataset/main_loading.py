@@ -36,6 +36,7 @@ def load_dataset(loader_name, root='_', normal_filename='_',
     if loader_name == 'forecast_eval':
         return ForecastLoaderEval(root,
                                   abnormal_filename,
+                                  random_state,
                                   in_size,
                                   out_size,
                                   n_features)
