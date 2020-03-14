@@ -130,7 +130,7 @@ model.train(dataset, eta, optimizer_name, lr, n_epochs, lr_milestones,
 # Test and Save model
 model.test(dataset, device, n_jobs_dataloader)
 model.save_results(export_json=results_path)
-model.save_model(export_model= model_path, save_ae=save_ae)
+model.save_model(export_model=model_path, save_ae=save_ae)
 
 # Prepare to write the results
 indices, labels, scores = zip(*model.results['test_scores'])

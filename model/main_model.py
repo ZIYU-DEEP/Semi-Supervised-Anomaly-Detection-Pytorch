@@ -111,11 +111,11 @@ class ModelEval:
 
         if self.evaluater is None:
             if self.optimizer_ == 'forecast_exp':
-                self.trainer = ForecastEvaluaterExp(eta, batch_size, device, n_jobs_dataloader)
+                self.evaluater = ForecastEvaluaterExp(eta, batch_size, device, n_jobs_dataloader)
             if self.optimizer_ == 'forecast_minus':
-                self.trainer = ForecastEvaluaterMinus(eta, batch_size, device, n_jobs_dataloader)
+                self.evaluater = ForecastEvaluaterMinus(eta, batch_size, device, n_jobs_dataloader)
             if self.optimizer_ == 'forecast_unsupervised':
-                self.trainer = ForecastEvaluater_(eta, batch_size, device, n_jobs_dataloader)
+                self.evaluater = ForecastEvaluater_(eta, batch_size, device, n_jobs_dataloader)
 
         self.evaluater.test(dataset, self.net)
         self.results['test_time'] = self.evaluater.test_time
