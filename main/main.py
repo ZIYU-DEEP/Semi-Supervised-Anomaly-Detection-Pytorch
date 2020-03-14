@@ -99,7 +99,7 @@ cut_path = '{}/cut_{}.pkl'.format(out_path, file_str)
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
 eta = float(eta_str * 0.01)
-test_list = np.load(test_list_filename)
+test_list = np.load('../utils/{}'.format(test_list_filename))
 
 # Check the existence of output path
 if not os.path.exists(out_path):
