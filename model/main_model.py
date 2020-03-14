@@ -87,6 +87,7 @@ class ModelEval:
                  eta: float = 1.0):
         known_optimizer_ = ('forecast_exp', 'forecast_minus', 'forecast_unsupervised')
         assert optimizer_ in known_optimizer_
+        self.optimizer_ = optimizer_
         self.eta = eta
         self.net = None
         self.evaluater= None
