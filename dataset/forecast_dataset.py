@@ -186,7 +186,7 @@ class ForecastDataset_(Dataset):
             # Concatenating data
             print('Concatenating data!')
             self.X_in = torch.tensor(X_nega_train_in, dtype=torch.float32)
-            self.X_out = torch.tensor(X_nega_train_in, dtype=torch.float32)
+            self.X_out = torch.tensor(X_nega_train_out, dtype=torch.float32)
             self.y = torch.tensor(y_nega_train, dtype=torch.int64)
 
         if not self.train:
