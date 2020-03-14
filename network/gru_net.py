@@ -5,7 +5,7 @@ Author: Leksai Ye, University of Chicago
 """
 
 import torch.nn as nn
-from .base_net import BaseNet
+from base_net import BaseNet
 
 
 class GRUNet(BaseNet):
