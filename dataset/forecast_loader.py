@@ -125,6 +125,7 @@ class ForecastLoaderEval:
     def __init__(self,
                  root: str,
                  abnormal_filename: str,
+                 random_state=42,
                  in_size=100,
                  out_size=25,
                  n_features=128):
@@ -132,6 +133,7 @@ class ForecastLoaderEval:
         print('Hi! I am setting train_set for you.')
         self.all_set = ForecastDatasetEval(root,
                                            abnormal_filename,
+                                           random_state,
                                            in_size,
                                            out_size,
                                            n_features)
