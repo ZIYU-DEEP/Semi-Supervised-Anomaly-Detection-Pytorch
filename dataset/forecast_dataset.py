@@ -148,7 +148,6 @@ class ForecastDataset_(Dataset):
     def __init__(self,
                  root: str,
                  normal_filename: str,
-                 abnormal_filename: str = '_',                 
                  random_state=42,
                  in_size=100,
                  out_size=25,
@@ -220,7 +219,6 @@ class ForecastDatasetEval(Dataset):
     def __init__(self,
                  root: str,
                  abnormal_filename: str,
-                 random_state=42,
                  in_size=100,
                  out_size=25,
                  n_features=128):
