@@ -174,7 +174,7 @@ f.write('---------------------\n')
 #############################################
 for test_abnormal_filename in test_list:
     # Load dataset for evaluation
-    dataset_eval = load_dataset(loader_eval_name, root, normal_filename, abnormal_filename,
+    dataset_eval = load_dataset(loader_eval_name, root, normal_filename, test_abnormal_filename,
                                 random_state, in_size, out_size, n_features, train_portion)
     # Load model for evaluation
     model_eval = ModelEval(optimizer_, eta=eta)
