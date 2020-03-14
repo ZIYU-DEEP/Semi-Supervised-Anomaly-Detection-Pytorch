@@ -5,7 +5,7 @@ Author: Leksai Ye, University of Chicago
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/networks
 """
 
-from .gru_net import GRUNet, GRUNetStacked
+from gru_net import GRUNet, GRUNetStacked
 
 
 def build_network(net_name='gru'):

@@ -4,7 +4,7 @@ Description: The loading functions.
 Author: Leksai Ye, University of Chicago
 """
 
-from .forecast_loader import ForecastLoader, ForecastLoader_, ForecastLoaderEval
+from forecast_loader import ForecastLoader, ForecastLoader_, ForecastLoaderEval
 
 
 def load_dataset(loader_name, root='_', normal_filename='_',

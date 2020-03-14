@@ -9,9 +9,9 @@ Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/DeepSAD
 import sys
 import torch
 import json
-from .forecast_exp_optimizer import ForecastTrainerExp, ForecastEvaluaterExp
-from .forecast_minus_optimizer import ForecastTrainerMinus, ForecastEvaluaterMinus
-from .forecast_unsupervised_optimizer import ForecastTrainer_, ForecastEvaluater_
+from forecast_exp_optimizer import ForecastTrainerExp, ForecastEvaluaterExp
+from forecast_minus_optimizer import ForecastTrainerMinus, ForecastEvaluaterMinus
+from forecast_unsupervised_optimizer import ForecastTrainer_, ForecastEvaluater_
 sys.path.append('../network/')
 from main_network import build_network
 
