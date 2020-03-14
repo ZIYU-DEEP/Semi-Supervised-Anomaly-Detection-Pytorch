@@ -26,6 +26,7 @@ def window_data(array, in_size, out_size, overlap=False, n_features=128):
         array_out (np.array): shape is (n_instances, out_size, n_features)
     """
     if len(array.shape) > 2:
+        print(n_features)
         print(array.shape)
         array = array.reshape(-1, int(n_features))
 
