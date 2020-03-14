@@ -70,7 +70,7 @@ parser.add_argument('--txt_filename', type=str, default='full_results.txt')
 p = parser.parse_args()
 
 # Extract the arguments
-loader_name = p.loader_name
+loader_name, loader_eval_name = p.loader_name, p.loader_eval_name
 root, normal_file, abnormal_file = p.root, p.normal_file, p.abnormal_file
 random_state, in_size, out_size = p.random_state, p.in_size, p.out_size
 n_features, train_portion, net_name = p.n_features, p.train_portion, p.net_name
