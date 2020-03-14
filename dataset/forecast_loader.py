@@ -31,7 +31,7 @@ class ForecastLoader:
                                          out_size,
                                          n_features,
                                          train_portion,
-                                         train=True,)
+                                         train=True)
         print('\nHi! I am setting test_set for you.')
         self.test_set = ForecastDataset(root,
                                         normal_filename,

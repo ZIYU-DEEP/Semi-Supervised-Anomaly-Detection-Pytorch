@@ -109,7 +109,7 @@ class ForecastDataset(Dataset):
             self.X_out = torch.tensor(np.concatenate((X_posi_train_out, X_nega_train_out)),
                                       dtype=torch.float32)
             self.y = torch.tensor(np.concatenate((y_posi_train, y_nega_train)),
-                                  dtype=torch.int64)
+                                  dtype=torch.int32)
 
         if not self.train:
             # Window the data for testing
@@ -117,7 +117,7 @@ class ForecastDataset(Dataset):
             X_posi_test_in, X_posi_test_out = window_data(X_posi_test, in_size,
                                                           out_size, False, n_features)
             X_nega_test_in, X_nega_test_out = window_data(X_nega_test, in_size,
-                                                            out_size, False, n_features)
+                                                          out_size, False, n_features)
 
             y_posi_test = np.ones(X_posi_test_in.shape[0])
             y_nega_test = np.zeros(X_nega_test_in.shape[0])
@@ -246,7 +246,7 @@ class ForecastDatasetEval(Dataset):
         print('Getting in and out data!')
         self.X_in = torch.tensor(X_posi_in, dtype=torch.float32)
         self.X_out = torch.tensor(X_posi_out, dtype=torch.float32)
-        self.y = torch.tensor(y_posi, dtype=torch.int64)
+        self.y = torch.tensor(y_posi, dtype=torch.int32)
 
     def __getitem__(self, index):
         X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])

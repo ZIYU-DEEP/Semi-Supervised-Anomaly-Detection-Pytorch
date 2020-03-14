@@ -77,7 +77,7 @@ class ForecastTrainerExp(BaseTrainer):
                 # The following is the core loss function
                 losses = torch.where(y == 0,
                                      dist_mean,
-                                     self.eta * ((dist_mean) * (-1)))
+                                     self.eta * ((dist_mean) ** (-1)))
                 loss = torch.mean(losses)
                 loss.backward()
                 optimizer.step()
@@ -119,7 +119,7 @@ class ForecastTrainerExp(BaseTrainer):
                 dist_mean = torch.mean(dist, axis=[1, 2])
                 losses = torch.where(y == 0,
                                      dist_mean,
-                                     self.eta * ((dist_mean) * (-1)))
+                                     self.eta * ((dist_mean) ** (-1)))
 
                 loss = torch.mean(losses)
                 scores = torch.mean(dist, axis=[1, 2])
@@ -197,7 +197,7 @@ class ForecastEvaluaterExp(BaseEvaluater):
                 dist_mean = torch.mean(dist, axis=[1, 2])
                 losses = torch.where(y == 0,
                                      dist_mean,
-                                     self.eta * ((dist_mean) * (-1)))
+                                     self.eta * ((dist_mean) ** (-1)))
 
                 loss = torch.mean(losses)
                 scores = torch.mean(dist, axis=[1, 2])

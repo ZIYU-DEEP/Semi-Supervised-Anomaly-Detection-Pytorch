@@ -9,7 +9,6 @@ from base_net import BaseNet
 
 
 class GRUNet(BaseNet):
-
     def __init__(self):
         super().__init__()
 
@@ -29,7 +28,6 @@ class GRUNet(BaseNet):
 
 
 class GRUNetStacked(BaseNet):
-
     def __init__(self):
         super().__init__()
 
