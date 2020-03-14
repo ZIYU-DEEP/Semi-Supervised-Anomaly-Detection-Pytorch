@@ -5,7 +5,7 @@ Author: Leksai Ye
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/optim
 """
 
-from .base_optimizer import BaseTrainer, BaseEvaluater
+from base_optimizer import BaseTrainer, BaseEvaluater
 from sklearn.metrics import roc_auc_score
 import torch.optim as optim
 import torch.nn as nn
