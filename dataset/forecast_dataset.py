@@ -35,15 +35,30 @@ def window_data(array, in_size, out_size, overlap=False, n_features=128):
         start_index = [i for i in range(0, len_, out_size)]
     else:
         start_index = [i for i in range(0, len_, win_size)]
-    if start_index[-1] + win_size > len_: start_index.pop()
+
+    while start_index[-1] + win_size + out_size > len_:
+        start_index.pop()
 
     index_in = [list(range(i, i + in_size)) for i in start_index]
     index_out = [list(range(i + in_size, i + in_size + out_size)) for i in start_index]
+    print(index_out)
 
     array_in = array[index_in, :]
     array_out = array[index_out, :]
 
     return array_in, array_out
+
+
+def txt_to_series(file_path, n_channels=128):
+    features = []
+
+    with open(file_path, 'r') as f:
+        for line in f:
+            x = line.split()
+            features.append(x)
+
+    series = np.array(features).reshape((-1, n_channels)).astype('float64')
+    return series
 
 
 # --------------------------------------------
