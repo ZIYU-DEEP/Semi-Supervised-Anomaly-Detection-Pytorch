@@ -72,8 +72,7 @@ class ForecastTrainer_(BaseTrainer):
                 dist = criterion(X_pred, X_out)
                 dist_mean = torch.mean(dist, axis=[1, 2])
                 # The following is the core loss function
-                losses = dist_mean
-                loss = torch.mean(losses)
+                loss = torch.mean(dist_mean)
                 loss.backward()
                 optimizer.step()
                 epoch_loss += loss.item()
@@ -112,9 +111,8 @@ class ForecastTrainer_(BaseTrainer):
                 dist = criterion(X_pred, X_out)
 
                 dist_mean = torch.mean(dist, axis=[1, 2])
-                losses = dist_mean
-                loss = torch.mean(losses)
-                scores = torch.mean(dist, axis=[1, 2])
+                loss = torch.mean(dist_mean)
+                scores = dist_mean
 
                 # Save triples of (idx, label, score) in a list
                 idx_label_score += list(zip(idx.cpu().data.numpy().tolist(),
@@ -185,9 +183,8 @@ class ForecastEvaluater_(BaseEvaluater):
                 dist = criterion(X_pred, X_out)
 
                 dist_mean = torch.mean(dist, axis=[1, 2])
-                losses = dist_mean
-                loss = torch.mean(losses)
-                scores = torch.mean(dist, axis=[1, 2])
+                loss = torch.mean(dist_mean)
+                scores = dist_mean
 
                 # Save triples of (idx, label, score) in a list
                 idx_label_score += list(zip(idx.cpu().data.numpy().tolist(),

@@ -51,8 +51,8 @@ parser.add_argument('--eta_str', default=100,
                     help='The _% represenntation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
-parser.add_argument('--n_epochs', type=int, default=250)
-parser.add_argument('--lr_milestones', type=str, default='60_120_180')
+parser.add_argument('--n_epochs', type=int, default=200)
+parser.add_argument('--lr_milestones', type=str, default='150_200')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
 parser.add_argument('--device_no', type=int, default=1)
@@ -184,7 +184,6 @@ for test_abnormal_filename in test_list:
     # Test the model
     model_eval.test(dataset_eval, device=device, eta=eta)
     _, _, scores = zip(*model_eval.results['test_scores'])
-    _, _, scores = np.array(indices), np.array(labels), np.array(scores)
     y = [1 if e > cut else 0 for e in scores]
 
     # Save the results

@@ -25,7 +25,7 @@ def load_dataset(loader_name, root='_', normal_filename='_',
                               train_portion)
 
     if loader_name == 'forecast_unsupervised':
-        return ForecastLoader_(root,
+        return ForecastLoaderUnsupervised(root,
                                normal_filename,
                                random_state,
                                in_size,

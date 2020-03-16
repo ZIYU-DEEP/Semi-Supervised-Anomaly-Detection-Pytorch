@@ -67,7 +67,7 @@ class ForecastLoader:
 # --------------------------------------------
 # 1.2. (b) The Loader Object for Training (Unsupervised)
 # --------------------------------------------
-class ForecastLoader_:
+class ForecastLoaderUnsupervised:
     def __init__(self,
                  root: str,
                  normal_filename: str,
@@ -78,7 +78,7 @@ class ForecastLoader_:
                  train_portion=0.8):
 
         print('Hi! I am setting train_set for you.')
-        self.train_set = ForecastDataset_(root,
+        self.train_set = ForecastDatasetUnsupervised(root,
                                           normal_filename,
                                           random_state,
                                           in_size,
@@ -87,7 +87,7 @@ class ForecastLoader_:
                                           train_portion,
                                           train=True,)
         print('\nHi! I am setting test_set for you.')
-        self.test_set = ForecastDataset_(root,
+        self.test_set = ForecastDatasetUnsupervised(root,
                                          normal_filename,
                                          random_state,
                                          in_size,
