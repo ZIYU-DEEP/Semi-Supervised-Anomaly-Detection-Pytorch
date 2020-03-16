@@ -5,7 +5,7 @@ Author: Leksai Ye, University of Chicago
 """
 
 from torch.utils.data import DataLoader
-from forecast_dataset import ForecastDataset, ForecastDataset_, ForecastDatasetEval
+from forecast_dataset import ForecastDataset, ForecastDatasetUnsupervised, ForecastDatasetEval
 
 
 # --------------------------------------------
