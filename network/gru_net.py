@@ -8,7 +8,7 @@ import torch.nn as nn
 from base_net import BaseNet
 
 
-class GRUNet(BaseNet):
+class LSTMNet(BaseNet):
     def __init__(self):
         super().__init__()
 
@@ -27,7 +27,7 @@ class GRUNet(BaseNet):
         return x
 
 
-class GRUNetStacked(BaseNet):
+class LSTMNetStacked(BaseNet):
     def __init__(self):
         super().__init__()
 
@@ -46,7 +46,7 @@ class GRUNetStacked(BaseNet):
         x = x.view(-1, 25, 128)
         return x
 
-# class GRUNetStacked(BaseNet):
+# class LSTMNetStackedBN(BaseNet):
 #     def __init__(self):
 #         super().__init__()
 #
@@ -72,7 +72,7 @@ class GRUNetStacked(BaseNet):
 #         # x = self.act(x)
 #         return x
 
-# class GRUNetStacked(BaseNet):
+# class LSTMNetStacked(BaseNet):
 #     def __init__(self):
 #         super().__init__()
 #
