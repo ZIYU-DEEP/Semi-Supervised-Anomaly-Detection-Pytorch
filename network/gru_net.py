@@ -42,7 +42,7 @@ class GRUNetStacked(BaseNet):
         x, _ = self.lstm2(x)
         x, (h, c) = self.lstm3(x)
         x = self.fc(h.view(-1, h.shape[-1]))
-        x = self.act(x)
+        # x = self.act(x)
         x = x.view(-1, 25, 128)
         return x
 
