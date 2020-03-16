@@ -41,8 +41,8 @@ parser.add_argument('--n_features', type=int, default=128)
 parser.add_argument('--train_portion', type=float, default=0.8)
 
 # Arguments for main_network
-parser.add_argument('--net_name', type=str, default='gru',
-                    help='[Choice]: gru, gru_stacked')
+parser.add_argument('--net_name', type=str, default='lstm',
+                    help='[Choice]: lstm, lstm_stacked')
 
 # Arguments for main_model
 parser.add_argument('--optimizer_', type=str, default='forecast_unsupervised',

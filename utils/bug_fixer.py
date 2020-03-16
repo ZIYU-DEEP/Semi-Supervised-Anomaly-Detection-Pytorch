@@ -94,9 +94,6 @@ def window_data(array, in_size, out_size, overlap=False, n_features=128):
 #--------------------------------------------
 # 1.1. (a) The Dataset Object for Training
 #--------------------------------------------
-import numpy as np
-
-
 class CustomDataset(Dataset):
     def __init__(self,
                  root: str,
