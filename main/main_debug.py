@@ -27,13 +27,13 @@ from main_model import *
 
 # Arguments for main_loading
 parser = argparse.ArgumentParser()
-parser.add_argument('--loader_name', type=str, default='debug_unsupervised',
+parser.add_argument('--loader_name', type=str, default='debug',
                     help='[Choise]: forecast, forecast_unsupervised, debug_unsupervised')
 parser.add_argument('--loader_eval_name', type=str, default='debug_eval',
                     help='[Choise]: forecast_eval, debug_eval')
 parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data/downtown')
 parser.add_argument('--normal_file', type=str, default='_')
-parser.add_argument('--abnormal_file', type=str, default='_',
+parser.add_argument('--abnormal_file', type=str, default='downtown_sigOver_10ms',
                     help='[Example]: _, downtown_sigOver_10ms_big_abnormal')
 parser.add_argument('--random_state', type=int, default=42)
 parser.add_argument('--in_size', type=int, default=100)
@@ -46,13 +46,13 @@ parser.add_argument('--net_name', type=str, default='lstm_stacked',
                     help='[Choice]: lstm, lstm_stacked')
 
 # Arguments for main_model
-parser.add_argument('--optimizer_', type=str, default='forecast_unsupervised',
+parser.add_argument('--optimizer_', type=str, default='forecast_exp',
                     help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
 parser.add_argument('--eta_str', default=100,
                     help='The _% represenntation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
-parser.add_argument('--n_epochs', type=int, default=200)
+parser.add_argument('--n_epochs', type=int, default=100)
 parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
@@ -67,7 +67,7 @@ parser.add_argument('--fp_rate', type=float, default=0.05,
 
 # Arguments for output_paths
 parser.add_argument('--test_list_filename', type=str, default='downtown_test_list.npy')
-parser.add_argument('--txt_filename', type=str, default='full_results.txt')
+parser.add_argument('--txt_filename', type=str, default='full_results_.txt')
 p = parser.parse_args()
 
 # Extract the arguments
@@ -85,6 +85,7 @@ test_list_filename, txt_filename = p.test_list_filename, p.txt_filename
 # Define data filenames
 normal_filename = '{}.npy'.format(normal_file)
 abnormal_filename = '{}.npy'.format(abnormal_file)
+abnormal_filename = abnormal_file
 
 # Define folder names
 folder_name = '{}_{}_{}'.format(normal_file, abnormal_file, optimizer_)

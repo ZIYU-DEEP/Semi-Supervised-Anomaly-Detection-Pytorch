@@ -117,19 +117,20 @@ class ForecastTrainerExp(BaseTrainer):
                 dist = criterion(X_pred, X_out)
 
                 dist_mean = torch.mean(dist, axis=[1, 2])
+                scores = dist_mean
                 losses = torch.where(y == 0,
                                      dist_mean,
                                      self.eta * ((dist_mean) ** (-1)))
 
                 loss = torch.mean(losses)
-                scores = torch.mean(dist, axis=[1, 2])
+
 
                 # Save triples of (idx, label, score) in a list
                 idx_label_score += list(zip(idx.cpu().data.numpy().tolist(),
                                             y.cpu().data.numpy().tolist(),
                                             scores.cpu().data.numpy().tolist()))
 
-                epoch_loss += loss.item()
+                # epoch_loss += loss.item()
                 n_batches += 1
 
         self.test_time = time.time() - start_time
@@ -142,7 +143,7 @@ class ForecastTrainerExp(BaseTrainer):
         self.test_auc = roc_auc_score(labels, scores)
 
         # Log results
-        print('Test Loss: {:.6f}'.format(epoch_loss / n_batches))
+        # print('Test Loss: {:.6f}'.format(epoch_loss / n_batches))
         print('Test AUC: {:.2f}%'.format(100. * self.test_auc))
         print('Test Time: {:.3f}s'.format(self.test_time))
         print('Finished testing.')

@@ -274,6 +274,46 @@ class ForecastDatasetEval(Dataset):
 # --------------------------------------------
 # 1.1. Debug
 # --------------------------------------------
+class DebugDataset(Dataset):
+    def __init__(self,
+                 root: str='/net/adv_spectrum/torch_data/downtown',
+                 abnormal_filename: str='downtown_sigOver_10ms',
+                 train: int=1):
+        super(Dataset, self).__init__()
+
+        print('Hey - I am starting to load your data!')
+        if train == 1:
+            X_nega_in = np.load(Path(root) / 'normal' / 'X_train_in.npy')
+            X_nega_out = np.load(Path(root) / 'normal' / 'X_train_out.npy')
+
+            X_posi_in = np.load(Path(root) / 'abnormal' / abnormal_filename / 'X_train_in.npy')
+            X_posi_out = np.load(Path(root) / 'abnormal' / abnormal_filename / 'X_train_out.npy')
+
+        elif train == 0:
+            X_nega_in = np.load(Path(root) / 'normal' / 'X_test_in.npy')
+            X_nega_out = np.load(Path(root) / 'normal' / 'X_test_out.npy')
+
+            X_posi_in = np.load(Path(root) / 'abnormal' / abnormal_filename / 'X_test_in.npy')
+            X_posi_out = np.load(Path(root) / 'abnormal' / abnormal_filename / 'X_test_out.npy')
+
+        y_nega = np.zeros(X_nega_in.shape[0])
+        y_posi = np.ones(X_posi_in.shape[0])
+
+        print('Concatenating data!')
+        # Note that we do not do shuffling here
+        # Rather, we will shuffle them at the DataLoader
+        self.X_in = torch.tensor(np.concatenate((X_nega_in, X_posi_in)), dtype=torch.float32)
+        self.X_out = torch.tensor(np.concatenate((X_nega_out, X_posi_out)), dtype=torch.float32)
+        self.y = torch.tensor(np.concatenate((y_nega, y_posi)), dtype=torch.int32)
+
+    def __getitem__(self, index):
+        X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
+        return X_in, X_out, y, index
+
+    def __len__(self):
+        return len(self.X_in)
+
+
 class DebugDatasetUnsupervised(Dataset):
     def __init__(self,
                  root: str='/net/adv_spectrum/torch_data/downtown',

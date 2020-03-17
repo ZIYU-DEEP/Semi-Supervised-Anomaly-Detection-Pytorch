@@ -6,7 +6,7 @@ Author: Leksai Ye, University of Chicago
 
 from torch.utils.data import DataLoader
 from forecast_dataset import ForecastDataset, ForecastDatasetUnsupervised, ForecastDatasetEval
-from forecast_dataset import DebugDatasetUnsupervised, DebugDatasetEval
+from forecast_dataset import DebugDataset, Unsupervised, DebugDatasetEval
 
 
 # --------------------------------------------
@@ -150,6 +150,44 @@ class ForecastLoaderEval:
                                 num_workers=num_workers,
                                 drop_last=True)
         return all_loader
+
+    def __repr__(self):
+        return self.__class__.__name__
+
+
+# --------------------------------------------
+# 1.3. (c) Debug
+# --------------------------------------------
+class DebugLoader:
+    def __init__(self,
+                 root: str,
+                 abnormal_filename: str):
+
+        print('Hi! I am setting trainning set for you.')
+        self.train_set = DebugDataset(root,
+                                      abnormal_filename,
+                                      train=1)
+        print('\nHi! I am setting testing set for you.')
+        self.test_set = DebugDataset(root,
+                                     abnormal_filename,
+                                     train=0)
+    def loaders(self,
+                batch_size: int,
+                shuffle_train=True,
+                shuffle_test=False,
+                num_workers: int = 0) -> (DataLoader, DataLoader):
+
+        train_loader = DataLoader(dataset=self.train_set,
+                                  batch_size=batch_size,
+                                  shuffle=shuffle_train,
+                                  num_workers=num_workers,
+                                  drop_last=True)
+        test_loader = DataLoader(dataset=self.test_set,
+                                 batch_size=batch_size,
+                                 shuffle=shuffle_test,
+                                 num_workers=num_workers,
+                                 drop_last=False)
+        return train_loader, test_loader
 
     def __repr__(self):
         return self.__class__.__name__
