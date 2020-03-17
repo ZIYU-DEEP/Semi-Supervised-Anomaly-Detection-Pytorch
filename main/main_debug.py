@@ -13,6 +13,7 @@ sys.path.append('../dataset/')
 sys.path.append('../network/')
 sys.path.append('../model/')
 
+import glob
 import os
 import argparse
 import numpy as np
@@ -41,7 +42,7 @@ parser.add_argument('--n_features', type=int, default=128)
 parser.add_argument('--train_portion', type=float, default=0.8)
 
 # Arguments for main_network
-parser.add_argument('--net_name', type=str, default='lstm',
+parser.add_argument('--net_name', type=str, default='lstm_stacked',
                     help='[Choice]: lstm, lstm_stacked')
 
 # Arguments for main_model
@@ -52,7 +53,7 @@ parser.add_argument('--eta_str', default=100,
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--n_epochs', type=int, default=200)
-parser.add_argument('--lr_milestones', type=str, default='150_200')
+parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
 parser.add_argument('--device_no', type=int, default=1)
