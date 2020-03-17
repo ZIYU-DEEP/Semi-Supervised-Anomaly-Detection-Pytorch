@@ -48,5 +48,5 @@ def load_dataset(loader_name, root='_', normal_filename='_',
     if loader_name == 'debug_eval':
         # In this case, root should be folder name
         # e.g. /net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0
-        return DebugLoaderUnsupervised(root)
+        return DebugLoaderEval(root)
     return None
