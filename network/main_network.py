@@ -5,7 +5,7 @@ Author: Leksai Ye, University of Chicago
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/networks
 """
 
-from gru_net import GRUNet, GRUNetStacked
+from lstm_net import LSTMNet, LSTMNetStacked
 
 
 def build_network(net_name='lstm'):

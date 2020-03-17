@@ -1,6 +1,6 @@
 """
 Title: gru_net.py
-Description: The GRU network.
+Description: The LSTM network.
 Author: Leksai Ye, University of Chicago
 """
 
@@ -12,7 +12,7 @@ class LSTMNet(BaseNet):
     def __init__(self):
         super().__init__()
 
-        self.gru = nn.GRU(128, 64, num_layers=1, batch_first=True)
+        self.gru = nn.GRU(128, 64, num_layers=3, batch_first=True)
         self.BN = nn.BatchNorm1d(100)
         self.fc = nn.Linear(64 * 100, 128 * 25)
         self.act = nn.ReLU()

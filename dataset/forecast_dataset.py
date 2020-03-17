@@ -269,3 +269,50 @@ class ForecastDatasetEval(Dataset):
 
     def __len__(self):
         return len(self.X_in)
+
+
+# --------------------------------------------
+# 1.1. Debug
+# --------------------------------------------
+class DebugDatasetUnsupervised(Dataset):
+    def __init__(self,
+                 root: str='/net/adv_spectrum/torch_data/downtown',
+                 train: int=1):
+        super(Dataset, self).__init__()
+
+        if train == 1:
+            X_in = np.load(Path(root) / 'normal' / 'X_train_in.npy')
+            X_out = np.load(Path(root) / 'normal' / 'X_train_out.npy')
+        elif train == 0:
+            X_in = np.load(Path(root) / 'normal' / 'X_test_in.npy')
+            X_out = np.load(Path(root) / 'normal' / 'X_test_out.npy')
+        y = np.zeros(X_in.shape[0])
+        print('Data loaded')
+
+        self.X_in = self.X_in = torch.tensor(X_in, dtype=torch.float32)
+        self.X_out = torch.tensor(X_out, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.int32)
+
+    def __getitem__(self, index):
+        X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
+        return X_in, X_out, y, index
+
+    def __len__(self):
+        return len(self.X_in)
+
+
+class DebugDatasetEval(Dataset):
+    def __init__(self,
+                 folder: str='/net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0'):
+        super(Dataset, self).__init__()
+
+        X_in = np.load(Path(folder) / 'X_in.npy')
+        X_out = np.load(Path(folder) / 'X_out.npy')
+        y = np.ones(X_in.shape[0])
+
+    def __getitem__(self, index):
+        X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
+        return X_in, X_out, y, index
+
+    def __len__(self):
+        return len(self.X_in)
