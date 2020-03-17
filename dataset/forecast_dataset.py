@@ -308,7 +308,7 @@ class DebugDatasetEval(Dataset):
 
         self.X_in = np.load(Path(folder) / 'X_in.npy')
         self.X_out = np.load(Path(folder) / 'X_out.npy')
-       self.y = np.ones(X_in.shape[0])
+        self.y = np.ones(X_in.shape[0])
 
     def __getitem__(self, index):
         X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
