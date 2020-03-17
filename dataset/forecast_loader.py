@@ -6,7 +6,7 @@ Author: Leksai Ye, University of Chicago
 
 from torch.utils.data import DataLoader
 from forecast_dataset import ForecastDataset, ForecastDatasetUnsupervised, ForecastDatasetEval
-from forecast_dataset import DebugDataset, DebugUnsupervised, DebugDatasetEval
+from forecast_dataset import DebugDataset, DebugDatasetUnsupervised, DebugDatasetEval
 
 
 # --------------------------------------------
