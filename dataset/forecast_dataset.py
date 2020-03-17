@@ -289,7 +289,7 @@ class DebugDatasetUnsupervised(Dataset):
         y = np.zeros(X_in.shape[0])
         print('Data loaded')
 
-        self.X_in = self.X_in = torch.tensor(X_in, dtype=torch.float32)
+        self.X_in = torch.tensor(X_in, dtype=torch.float32)
         self.X_out = torch.tensor(X_out, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.int32)
 
@@ -306,9 +306,12 @@ class DebugDatasetEval(Dataset):
                  folder: str='/net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0'):
         super(Dataset, self).__init__()
 
-        self.X_in = np.load(Path(folder) / 'X_in.npy')
-        self.X_out = np.load(Path(folder) / 'X_out.npy')
-        self.y = np.ones(X_in.shape[0])
+        X_in = np.load(Path(folder) / 'X_in.npy')
+        X_out = np.load(Path(folder) / 'X_out.npy')
+        y = np.ones(X_in.shape[0])
+        self.X_in = torch.tensor(X_in, dtype=torch.float32)
+        self.X_out = torch.tensor(X_out, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.int32)
 
     def __getitem__(self, index):
         X_in, X_out, y = self.X_in[index], self.X_out[index], int(self.y[index])
