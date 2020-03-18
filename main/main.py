@@ -84,20 +84,19 @@ txt_filename = p.txt_filename
 # Define folder to save the model and relating results
 folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
 out_path = './{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
-
-# Check the existence of output path
+final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
+                                                          n_epochs, batch_size)
 if not os.path.exists(out_path): os.makedirs(out_path)
-out_path = Path(out_path)
+if not os.path.exists(final_path): os.makedirs(final_path)
 
 # Define the general txt file path with stores all models' results
 txt_result_file = '{}/{}'.format(out_path, txt_filename)
 
-# Define the resulting file paths
-file_str = 'net_{}_eta_{}_epochs_{}_batch_{}'.format(net_name, eta_str, n_epochs, batch_size)
-model_path = out_path / file_str /'model.tar'
-results_path = out_path / file_str / 'results.json'
-result_df_path = out_path / file_str / 'result_df.pkl'
-cut_path = out_path / file_str / 'cut.pkl'
+# Define the path for others
+model_path = Path(final_path) / 'model.tar'
+results_path = Path(final_path) / 'results.json'
+result_df_path = Path(final_path) / 'result_df.pkl'
+cut_path = Path(final_path) / 'cut.pkl'
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
