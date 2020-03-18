@@ -103,7 +103,6 @@ cut_path = out_path / file_str / 'cut_{}.pkl'
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
 eta = float(eta_str * 0.01)
-test_list = np.load('../utils/{}'.format(test_list_filename))
 
 # Set random state
 torch.manual_seed(random_state)
