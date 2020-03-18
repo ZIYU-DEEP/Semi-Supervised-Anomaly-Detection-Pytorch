@@ -86,9 +86,8 @@ folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
 out_path = './{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
 
 # Check the existence of output path
-if not os.path.exists(out_path):
-    os.makedirs(out_path)
-    out_path = Path(out_path)
+if not os.path.exists(out_path): os.makedirs(out_path)
+out_path = Path(out_path)
 
 # Define the general txt file path with stores all models' results
 txt_result_file = '{}/{}'.format(out_path, txt_filename)
