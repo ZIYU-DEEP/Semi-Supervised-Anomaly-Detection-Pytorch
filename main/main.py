@@ -196,9 +196,7 @@ for root_abnormal in l_root_abnormal:
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
         print(folder)
         # Load dataset for evaluation
-        dataset_eval = load_dataset(loader_eval_name, folder, '_', '_',
-                                    random_state, in_size, out_size,
-                                    n_features, train_portion)
+        dataset_eval = load_dataset(loader_eval_name, root_abnormal)
         # Load model for evaluation
         model_eval = ModelEval(optimizer_, eta=eta)
         model_eval.set_network(net_name)
