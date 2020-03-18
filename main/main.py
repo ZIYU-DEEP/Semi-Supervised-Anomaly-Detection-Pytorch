@@ -79,7 +79,7 @@ lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
 weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jobs_dataloader
 save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
-test_list_filename, txt_filename = p.test_list_filename, p.txt_filename
+txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
 folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
