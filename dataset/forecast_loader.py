@@ -23,7 +23,7 @@ class ForecastLoader:
                                          abnormal_folder,
                                          train=1)
         print('\nHi! I am setting testing set for you.')
-        self.train_set = ForecastDataset(root,
+        self.test_set = ForecastDataset(root,
                                         normal_folder,
                                         abnormal_folder,
                                         train=0)
@@ -63,7 +63,7 @@ class ForecastLoaderUnsupervised:
                                                      normal_folder,
                                                      True)
         print('\nHi! I am setting test_set for you.')
-        self.train_set = ForecastDatasetUnsupervised(root,
+        self.test_set = ForecastDatasetUnsupervised(root,
                                                      normal_folder,
                                                      False)
 
