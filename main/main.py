@@ -95,9 +95,9 @@ txt_result_file = '{}/{}'.format(out_path, txt_filename)
 # Define the resulting file paths
 file_str = 'net_{}_eta_{}_epochs_{}_batch_{}'.format(net_name, eta_str, n_epochs, batch_size)
 model_path = out_path / file_str /'model.tar'
-results_path = out_path / file_str / 'results_{}.json'
-result_df_path = out_path / file_str / 'result_df_{}.pkl'
-cut_path = out_path / file_str / 'cut_{}.pkl'
+results_path = out_path / file_str / 'results.json'
+result_df_path = out_path / file_str / 'result_df.pkl'
+cut_path = out_path / file_str / 'cut.pkl'
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
