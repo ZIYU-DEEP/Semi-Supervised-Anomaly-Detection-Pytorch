@@ -24,8 +24,10 @@ from main_loading import *
 from main_network import *
 from main_model import *
 
-# Most of the time, you only need to specify:
-# root, normal_folder, abnormal_folder, optimizer_, eta_str, n_epochs
+# Example Command:
+# Python main.py --loader_name forecast --loader_eval_name forecast_eval --optimizer_ forecast_exp
+# --root /net/adv_spectrum/torch_data --normal_folder ryerson_train --abnormal_folder ryerson_ab_train_sigOver_10ms
+# --net_name lstm_stacked --device_no 2
 
 # Initialize the parser
 parser = argparse.ArgumentParser()
@@ -38,7 +40,7 @@ parser.add_argument('--loader_eval_name', type=str, default='forecast_eval')
 parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data',
                     help='[Choice]: .../torch_data, .../torch_data_deepsad')
 parser.add_argument('--normal_folder', type=str, default='downtown',
-                    help='[Example]: downtown, ryerson_train, ryerson_ab_train, campus_drive')
+                    help='[Example]: downtown, ryerson_train, campus_drive')
 parser.add_argument('--abnormal_folder', type=str, default='downtown_sigOver_10ms',
                     help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
@@ -50,7 +52,7 @@ parser.add_argument('--net_name', type=str, default='lstm_stacked',
 parser.add_argument('--optimizer_', type=str, default='forecast_exp',
                     help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
 parser.add_argument('--eta_str', default=100,
-                    help='The _% represenntation of eta - choose from 100, 50, 25, etc.')
+                    help='The _% representation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--n_epochs', type=int, default=100)
@@ -188,7 +190,10 @@ for root_abnormal in l_root_abnormal:
     root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
 
     if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
-                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
+                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms',
+                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_LOS-5M-USRP3',
+                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_NLOS-5M-USRP1',
+                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_Dynamics-5M-USRP1']:
         continue
 
     f.write('######################\n')
