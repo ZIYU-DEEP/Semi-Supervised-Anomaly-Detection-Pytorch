@@ -71,7 +71,7 @@ parser.add_argument('--txt_filename', type=str, default='full_results.txt')
 p = parser.parse_args()
 
 # Extract the arguments
-random_state, loader_name, loader_eval_name = p.random_state, p.loader_eval_name, p.loader_name
+random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.loader_eval_name
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
 net_name = p.net_name
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
