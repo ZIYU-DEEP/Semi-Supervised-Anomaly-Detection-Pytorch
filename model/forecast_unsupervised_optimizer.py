@@ -1,7 +1,7 @@
 """
 Title: forecast_optimizer_unsupervised.py
 Description: The unsupervised optimizer.
-Author: Leksai Ye
+Author: Lek'Sai Ye
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/optim
 """
 

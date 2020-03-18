@@ -1,7 +1,7 @@
 """
 Title: gru_net.py
 Description: The LSTM network.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 """
 
 import torch.nn as nn

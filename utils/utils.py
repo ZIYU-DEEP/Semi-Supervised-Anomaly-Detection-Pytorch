@@ -1,7 +1,7 @@
 """
 Title: utils.py
 Description: Helper functions.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 """
 
 import numpy as np

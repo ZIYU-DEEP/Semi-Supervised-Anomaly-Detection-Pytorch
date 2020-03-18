@@ -1,59 +1,31 @@
 """
 Title: main_loading.py
 Description: The loading functions.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 """
 
 from forecast_loader import ForecastLoader, ForecastLoaderUnsupervised, ForecastLoaderEval
-from forecast_loader import DebugLoader, DebugLoaderUnsupervised, DebugLoaderEval
 
 
-def load_dataset(loader_name, root='_', normal_filename='_',
-                 abnormal_filename='_', random_state=42, in_size=100,
-                 out_size=25, n_features=128, train_portion=0.8):
+def load_dataset(loader_name: str='forecast',
+                 root: str='/net/adv_spectrum/torch_data',
+                 normal_folder: str='downtown',
+                 abnormal_folder: str='downtown_sigOver_10ms'):
 
-    known_loaders = ('forecast', 'forecast_unsupervised', 'forecast_eval',
-                 'debug', 'debug_unsupervised', 'debug_eval')
+    known_loaders = ('forecast', 'forecast_unsupervised', 'forecast_eval')
     assert loader_name in known_loaders
 
     if loader_name == 'forecast':
-        return ForecastLoader(root,
-                              normal_filename,
-                              abnormal_filename,
-                              random_state,
-                              in_size,
-                              out_size,
-                              n_features,
-                              train_portion)
+        return ForecastLoader(root, normal_folder, abnormal_folder)
 
     if loader_name == 'forecast_unsupervised':
-        return ForecastLoaderUnsupervised(root,
-                               normal_filename,
-                               random_state,
-                               in_size,
-                               out_size,
-                               n_features,
-                               train_portion)
+        return ForecastLoaderUnsupervised(root, normal_folder)
 
     if loader_name == 'forecast_eval':
-        return ForecastLoaderEval(root,
-                                  abnormal_filename,
-                                  random_state,
-                                  in_size,
-                                  out_size,
-                                  n_features)
-    if loader_name == 'debug':
-        # In this case, root should be '/net/adv_spectrum/torch_data/downtown'
-        # And abnormal_filename should be 'downtown_sigOver_10ms'
-        return DebugLoader(root, abnormal_filename)
-
-    if loader_name == 'debug_unsupervised':
-        # In this case, root should be '/net/adv_spectrum/torch_data/downtown'
-        return DebugLoaderUnsupervised(root)
-
-    if loader_name == 'debug_eval':
-        # In this case, root should be folder name
-        # e.g. /net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0
-        return DebugLoaderEval(root)
+        # In this case, root should be something different, like:
+        # '/net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0'
+        # But no worries, as you do not need to manually specify them
+        # main_evaluate.py / main.py will auto-fill in the root
+        return ForecastLoaderEval(root)
 
     return None

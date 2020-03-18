@@ -18,28 +18,29 @@ import os
 import argparse
 import numpy as np
 import pandas as pd
+
+from pathlib import Path
 from main_loading import *
 from main_network import *
 from main_model import *
 
 # Most of the time, you only need to specify:
-# normal_filename, abnormal_filename, optimizer_, eta_str, n_epochs
+# root, normal_folder, abnormal_folder, optimizer_, eta_str, n_epochs
+
+# Initialize the parser
+parser = argparse.ArgumentParser()
+parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
-parser = argparse.ArgumentParser()
-parser.add_argument('--loader_name', type=str, default='debug',
-                    help='[Choise]: forecast, forecast_unsupervised, debug_unsupervised')
-parser.add_argument('--loader_eval_name', type=str, default='debug_eval',
-                    help='[Choise]: forecast_eval, debug_eval')
-parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data/downtown')
-parser.add_argument('--normal_file', type=str, default='_')
-parser.add_argument('--abnormal_file', type=str, default='downtown_sigOver_10ms',
-                    help='[Example]: _, downtown_sigOver_10ms_big_abnormal')
-parser.add_argument('--random_state', type=int, default=42)
-parser.add_argument('--in_size', type=int, default=100)
-parser.add_argument('--out_size', type=int, default=25)
-parser.add_argument('--n_features', type=int, default=128)
-parser.add_argument('--train_portion', type=float, default=0.8)
+parser.add_argument('--loader_name', type=str, default='forecast',
+                    help='[Choice]: forecast, forecast_unsupervised')
+parser.add_argument('--loader_eval_name', type=str, default='forecast_eval')
+parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data',
+                    help='[Choice]: .../torch_data, .../torch_data_deepsad')
+parser.add_argument('--normal_folder', type=str, default='downtown',
+                    help='[Example]: downtown, ryerson_train, ryerson_ab_train, campus_drive')
+parser.add_argument('--abnormal_folder', type=str, default='downtown_sigOver_10ms',
+                    help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_stacked',
@@ -66,15 +67,13 @@ parser.add_argument('--fp_rate', type=float, default=0.05,
                     help='The false positive rate as the judge threshold.')
 
 # Arguments for output_paths
-parser.add_argument('--test_list_filename', type=str, default='downtown_test_list.npy')
-parser.add_argument('--txt_filename', type=str, default='full_results_.txt')
+parser.add_argument('--txt_filename', type=str, default='full_results.txt')
 p = parser.parse_args()
 
 # Extract the arguments
-loader_name, loader_eval_name = p.loader_name, p.loader_eval_name
-root, normal_file, abnormal_file = p.root, p.normal_file, p.abnormal_file
-random_state, in_size, out_size = p.random_state, p.in_size, p.out_size
-n_features, train_portion, net_name = p.n_features, p.train_portion, p.net_name
+random_state, loader_name, loader_eval_name = p.loader_name, p.loader_eval_name, p.random_state
+root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
+net_name = p.net_name
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
 lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
@@ -82,40 +81,38 @@ weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jo
 save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
 test_list_filename, txt_filename = p.test_list_filename, p.txt_filename
 
-# Define data filenames
-normal_filename = '{}.npy'.format(normal_file)
-abnormal_filename = '{}.npy'.format(abnormal_file)
-abnormal_filename = abnormal_file
+# Define folder to save the model and relating results
+folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
+out_path = './{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
 
-# Define folder names
-folder_name = '{}_{}_{}'.format(normal_file, abnormal_file, optimizer_)
-out_path = './{}'.format(folder_name)
+# Check the existence of output path
+if not os.path.exists(out_path):
+    os.makedirs(out_path)
+    out_path = Path(out_path)
 
 # Define the general txt file path with stores all models' results
-txt_result_file = './{}'.format(txt_filename)
+txt_result_file = '{}/{}'.format(out_path, txt_filename)
 
 # Define the resulting file paths
-file_str = '{}_{}_{}_{}'.format(folder_name, net_name, n_epochs, eta_str)
-model_path = '{}/model_{}.tar'.format(out_path, file_str)
-results_path = '{}/results_{}.json'.format(out_path, file_str)
-result_df_path = '{}/result_df_{}.pkl'.format(out_path, file_str)
-cut_path = '{}/cut_{}.pkl'.format(out_path, file_str)
+file_str = 'net_{}-eta_{}-epochs_{}-batch_{}'.format(net_name, eta_str, n_epochs, batch_size)
+model_path = out_path / 'model_{}.tar'.format(file_str)
+results_path = out_path / 'results_{}.json'.format(file_str)
+result_df_path = out_path / 'result_df_{}.pkl'.format(file_str)
+cut_path = out_path / 'cut_{}.pkl'.format(file_str)
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
 eta = float(eta_str * 0.01)
 test_list = np.load('../utils/{}'.format(test_list_filename))
 
-# Check the existence of output path
-if not os.path.exists(out_path):
-    os.makedirs(out_path)
+# Set random state
+torch.manual_seed(random_state)
 
 #############################################
 # 1. Model Training
 #############################################
 # Loading data
-dataset = load_dataset(loader_name, root, normal_filename, abnormal_filename,
-                       random_state, in_size, out_size, n_features, train_portion)
+dataset = load_dataset(loader_name, root, normal_folder, abnormal_folder)
 
 # Loading model
 model = Model(optimizer_, eta)
@@ -174,53 +171,42 @@ f.write('---------------------\n')
 #############################################
 # 3. Model Evaluation
 #############################################
-root_abnormal = '/net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1'
-f.write('######################\n')
-f.write('Results for {}:\n'.format(root_abnormal))
-for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
-    print(folder)
-    # Load dataset for evaluation
-    dataset_eval = load_dataset(loader_eval_name, folder, '_', '_',
-                                random_state, in_size, out_size, n_features, train_portion)
-    # Load model for evaluation
-    model_eval = ModelEval(optimizer_, eta=eta)
-    model_eval.set_network(net_name)
-    model_eval.load_model(model_path=model_path, map_location=device)
+l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_10ms',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_20ms',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP1',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP2',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP3',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_NLOS-5M-USRP1',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1']
 
-    # Test the model
-    model_eval.test(dataset_eval, device=device, eta=eta)
-    _, _, scores = zip(*model_eval.results['test_scores'])
-    y = [1 if e > cut else 0 for e in scores]
+for root_abnormal in l_root_abnormal:
+    print('I am starting evaluation for you.')
+    print('Abracadabra! Prajnaparamita! JI-JI-RU-LV-LING!')
+    root_abnormal = root_abnormal.format(normal_folder)
+    f.write('######################\n')
+    f.write('Results for {}:\n'.format(root_abnormal))
+    for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
+        print(folder)
+        # Load dataset for evaluation
+        dataset_eval = load_dataset(loader_eval_name, folder, '_', '_',
+                                    random_state, in_size, out_size,
+                                    n_features, train_portion)
+        # Load model for evaluation
+        model_eval = ModelEval(optimizer_, eta=eta)
+        model_eval.set_network(net_name)
+        model_eval.load_model(model_path=model_path, map_location=device)
 
-    # Save the results
-    f.write('---------------------\n')
-    f.write('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
-    print('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
+        # Test the model
+        model_eval.test(dataset_eval, device=device, eta=eta)
+        _, _, scores = zip(*model_eval.results['test_scores'])
+        y = [1 if e > cut else 0 for e in scores]
+
+        # Save the results
+        f.write('---------------------\n')
+        f.write('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
+        print('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
 
 f.write('=====================\n\n')
 f.close()
 print('Finished. Now I am going to bed. Bye.')
-
-# for test_abnormal_filename in test_list:
-#     # Load dataset for evaluation
-#     dataset_eval = load_dataset(loader_eval_name, root, normal_filename, test_abnormal_filename,
-#                                 random_state, in_size, out_size, n_features, train_portion)
-#     # Load model for evaluation
-#     model_eval = ModelEval(optimizer_, eta=eta)
-#     model_eval.set_network(net_name)
-#     model_eval.load_model(model_path=model_path, map_location=device)
-#
-#     # Test the model
-#     model_eval.test(dataset_eval, device=device, eta=eta)
-#     _, _, scores = zip(*model_eval.results['test_scores'])
-#     y = [1 if e > cut else 0 for e in scores]
-#
-#     # Save the results
-#     f.write('---------------------\n')
-#     f.write('[Recall for {}] {}\n'.format(test_abnormal_filename, sum(y) / len(y)))
-#     print('Detection result for the file: {}'.format(test_abnormal_filename))
-#     print(sum(y) / len(y))
-#
-# f.write('=====================\n\n')
-# f.close()
-# print('Finished. Now I am going to bed. Bye.')

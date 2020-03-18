@@ -1,7 +1,7 @@
 """
 Title: main.py
 Description: The main file to run the unsupervised models.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 """
 
 #############################################

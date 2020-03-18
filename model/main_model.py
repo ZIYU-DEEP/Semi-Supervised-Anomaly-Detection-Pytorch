@@ -2,7 +2,7 @@
 """
 Title: main_model.py
 Description: The main classes for models.
-Author: Leksai Ye
+Author: Lek'Sai Ye
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/DeepSAD.py
 """
 

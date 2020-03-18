@@ -1,7 +1,7 @@
 """
 Title: forecast_optimizer_exp.py
 Description: The semi-supervised optimizer with exponential loss function for anomaly.
-Author: Leksai Ye
+Author: Lek'Sai Ye
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/optim
 """
 

@@ -1,7 +1,7 @@
 """
 Title: main_network.py
 Description: Build networks.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/networks
 """
 
