@@ -25,7 +25,7 @@ from main_network import *
 from main_model import *
 
 # Example Command:
-# Python main.py --loader_name forecast --loader_eval_name forecast_eval --optimizer_ forecast_exp
+# python main.py --loader_name forecast --loader_eval_name forecast_eval --optimizer_ forecast_exp
 # --root /net/adv_spectrum/torch_data --normal_folder ryerson_train --abnormal_folder ryerson_ab_train_sigOver_10ms
 # --net_name lstm_stacked --device_no 2
 
