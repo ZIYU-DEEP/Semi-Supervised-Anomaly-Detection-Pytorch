@@ -1,7 +1,7 @@
 """
 Title: main.py
 Description: The main file to run the unsupervised models.
-Author: Leksai Ye, University of Chicago
+Author: Lek'Sai Ye, University of Chicago
 """
 
 #############################################
@@ -94,11 +94,11 @@ if not os.path.exists(out_path):
 txt_result_file = '{}/{}'.format(out_path, txt_filename)
 
 # Define the resulting file paths
-file_str = 'net_{}-eta_{}-epochs_{}-batch_{}'.format(net_name, eta_str, n_epochs, batch_size)
-model_path = out_path / 'model_{}.tar'.format(file_str)
-results_path = out_path / 'results_{}.json'.format(file_str)
-result_df_path = out_path / 'result_df_{}.pkl'.format(file_str)
-cut_path = out_path / 'cut_{}.pkl'.format(file_str)
+file_str = 'net_{}_eta_{}_epochs_{}_batch_{}'.format(net_name, eta_str, n_epochs, batch_size)
+model_path = out_path / file_str /'model.tar'
+results_path = out_path / file_str / 'results_{}.json'
+result_df_path = out_path / file_str / 'result_df_{}.pkl'
+cut_path = out_path / file_str / 'cut_{}.pkl'
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
@@ -183,7 +183,17 @@ l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
 for root_abnormal in l_root_abnormal:
     print('I am starting evaluation for you.')
     print('Abracadabra! Prajnaparamita! JI-JI-RU-LV-LING!')
-    root_abnormal = root_abnormal.format(normal_folder)
+
+    if normal_folder == 'ryerson_train': normal_folder_ = 'ryerson_ab_train'
+    elif normal_folder == '871': normal_folder_ = '871_ab'
+    else: normal_folder_ = normal_folder
+
+    root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
+
+    if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
+                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
+        continue
+
     f.write('######################\n')
     f.write('Results for {}:\n'.format(root_abnormal))
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
