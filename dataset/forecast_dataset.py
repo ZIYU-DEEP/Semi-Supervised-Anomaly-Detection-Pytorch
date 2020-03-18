@@ -12,7 +12,7 @@ from torch.utils.data import Dataset
 
 
 # --------------------------------------------
-# Dataset for Semi-Supervised Forecast Model (root, abnormal_filename, train)
+# Dataset for Semi-Supervised Forecast Model (root, abnormal_folder, train)
 # --------------------------------------------
 class ForecastDataset(Dataset):
     def __init__(self,
@@ -29,14 +29,14 @@ class ForecastDataset(Dataset):
             X_nega_in = np.load(data_source / 'normal' / 'X_train_in.npy')
             X_nega_out = np.load(data_source / 'normal' / 'X_train_out.npy')
 
-            X_posi_in = np.load(data_source / 'abnormal' / abnormal_filename / 'X_train_in.npy')
-            X_posi_out = np.load(data_source / 'abnormal' / abnormal_filename / 'X_train_out.npy')
+            X_posi_in = np.load(data_source / 'abnormal' / abnormal_folder / 'X_train_in.npy')
+            X_posi_out = np.load(data_source / 'abnormal' / abnormal_folder / 'X_train_out.npy')
         else:
             X_nega_in = np.load(data_source / 'normal' / 'X_test_in.npy')
             X_nega_out = np.load(data_source / 'normal' / 'X_test_out.npy')
 
-            X_posi_in = np.load(data_source / 'abnormal' / abnormal_filename / 'X_test_in.npy')
-            X_posi_out = np.load(data_source / 'abnormal' / abnormal_filename / 'X_test_out.npy')
+            X_posi_in = np.load(data_source / 'abnormal' / abnormal_folder / 'X_test_in.npy')
+            X_posi_out = np.load(data_source / 'abnormal' / abnormal_folder / 'X_test_out.npy')
 
         y_nega = np.zeros(X_nega_in.shape[0])
         y_posi = np.ones(X_posi_in.shape[0])
