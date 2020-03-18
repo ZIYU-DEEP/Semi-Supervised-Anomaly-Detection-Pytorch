@@ -193,6 +193,7 @@ for root_abnormal in l_root_abnormal:
 
     f.write('######################\n')
     f.write('Results for {}:\n'.format(root_abnormal))
+    total_recall = 0
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
         print(folder)
         # Load dataset for evaluation
@@ -206,11 +207,17 @@ for root_abnormal in l_root_abnormal:
         model_eval.test(dataset_eval, device=device, eta=eta)
         _, _, scores = zip(*model_eval.results['test_scores'])
         y = [1 if e > cut else 0 for e in scores]
+        recall = sum(y) / len(y)
+        total_recall += recall
 
         # Save the results
         f.write('---------------------\n')
-        f.write('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
-        print('[Recall for file {}] {}\n'.format(i, sum(y) / len(y)))
+        f.write('[Recall for file {}] {}\n'.format(i, recall))
+        print('[Recall for file {}] {}\n'.format(i, recall))
+
+    mean_recall = total_recall / (i + 1)
+    f.write('[**Average Recall**] {}\n'.format(mean_recall))
+    print('[**Average Recall**] {}\n'.format(mean_recall))
 
 f.write('=====================\n\n')
 f.close()
