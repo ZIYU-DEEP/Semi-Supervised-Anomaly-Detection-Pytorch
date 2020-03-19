@@ -3,8 +3,10 @@ Title: folder_to_xs.py
 Description: Preprocessing for spectrum data. You should only use this for normal and sigover.
 Author: Lek'Sai Ye, University of Chicago
 [Example Command:]
->>> python folder_to_xs_save.py --model deepsad -nf 871 -af 871_ab_sigOver_5ms --train 1
->>> python folder_to_xs_save.py --model deepsad -nf 871 -af 871_ab_sigOver_5ms --train 0
+python folder_to_xs_save.py --model forecast -nf 871 -af 871_ab_sigOver_5ms --train 1
+python folder_to_xs_save.py --model forecast -nf 871 -af 871_ab_sigOver_5ms --train 0
+python folder_to_xs_save.py --model forecast -nf campus_drive -af campus_drive_sigOver_10ms --train 1
+python folder_to_xs_save.py --model forecast -nf campus_drive -af campus_drive_sigOver_10ms --train 0
 """
 
 import argparse
