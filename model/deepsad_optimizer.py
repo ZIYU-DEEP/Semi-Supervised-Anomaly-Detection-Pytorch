@@ -286,7 +286,9 @@ class DeepSADTrainer(BaseTrainer):
         print('Finished testing.')
 
     def init_center_c(self, train_loader, net, eps=0.1):
-        """Initialize hypersphere center c as the mean from an initial forward pass on the data."""
+        """
+        Initialize hypersphere center c as the mean from an initial forward pass on the data.
+        """
         n_samples = 0
         c = torch.zeros(net.rep_dim, device=self.device)
 
@@ -472,6 +474,7 @@ class DeepSADEvaluater(BaseEvaluater):
         # Hyper-parameter for the weight of anomaly training
         self.c = torch.tensor(c, device=self.device) if c is not None else None
         self.eta = eta
+        self.eps = 1e-6
 
         # Results
         self.test_auc = None
