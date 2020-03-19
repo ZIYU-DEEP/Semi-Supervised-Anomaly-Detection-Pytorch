@@ -246,7 +246,8 @@ def save_abnormal_Xs(path, path_, in_size=100, out_size=25, overlap=False, n_fea
     That folder lives in the same directory with the previous "large" array, if any.
 
     Inputs:
-        path_abnormal (str): e.g. '/net/adv_spectrum/data/feature/downsample_10/abnormal/downtown_LOS-5M-USRP1/100_25'
+        path (str): e.g. '/net/adv_spectrum/data/feature/downsample_10/abnormal/downtown_LOS-5M-USRP1/100_25'
+        path_ (str): e.g. '/net/adv_spectrum/torch_data/downtown/abnormal/downtown_sigOver_10ms'
         overlap (bool): train = 1 / 0 --> True; train = - 1 --> False
     Returns:
         X_in (np.array): The input which will be fed into the network
