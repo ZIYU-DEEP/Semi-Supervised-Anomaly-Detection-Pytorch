@@ -3,12 +3,11 @@ Title: save_abnormal_xs.py
 Description: Preprocessing for spectrum data. You should only use this for anomalies.
 Author: Lek'Sai Ye, University of Chicago
 [Example Command:]
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_sigOver_5ms
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_LOS-5M-USRP1
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_LOS-5M-USRP2
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_LOS-5M-USRP3
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_NLOS-5M-USRP1
->>> python save_abnormal_xs.py --model deepsad -nf 871 -af 871_ab_Dynamics-5M-USRP1
+python save_abnormal_xs.py --model forecast -nf 871 -af 871_ab_LOS-5M-USRP1
+python save_abnormal_xs.py --model forecast -nf 871 -af 871_ab_LOS-5M-USRP2
+python save_abnormal_xs.py --model forecast -nf 871 -af 871_ab_LOS-5M-USRP3
+python save_abnormal_xs.py --model forecast -nf 871 -af 871_ab_NLOS-5M-USRP1
+python save_abnormal_xs.py --model forecast -nf 871 -af 871_ab_Dynamics-5M-USRP1
 """
 
 import argparse
