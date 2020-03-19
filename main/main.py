@@ -4,13 +4,13 @@ Description: The main file to run the unsupervised models.
 Author: Lek'Sai Ye, University of Chicago
 [Example Command]
 > For <supervised training>:
-python main.py -nf ryerson -af ryerson_ab_train_sigOver_10ms -gpu 2
+python main.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 2
 python main.py -nf downtown -af downtown_sigOver_10ms -gpu 2
 python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 1
 python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 1
 
 > For <unsupervised training>:
-python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson -af ryerson_ab_train_sigOver_10ms -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 3
 python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -af downtown_sigOver_10ms -gpu 3
 python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -af campus_drive_sigOver_10ms -gpu 3
 python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -af 871_ab_sigOver_5ms -gpu 3
@@ -162,7 +162,7 @@ np.save(cut_path, cut)
 f = open(txt_result_file, 'a')
 f.write('############################################################\n')
 f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-f.write('[DataFrame Name] {}\n'.format(result_df_path))
+f.write('\n[DataFrame Name] {}\n'.format(result_df_path))
 f.write('[Normal Folder] {}\n'.format(normal_folder))
 f.write('[Abnormal Filename] {}\n'.format(abnormal_folder))
 f.write('[Model] {}\n'.format(optimizer_))
