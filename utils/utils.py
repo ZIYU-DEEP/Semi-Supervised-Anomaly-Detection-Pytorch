@@ -173,6 +173,7 @@ def folder_to_Xs_save(path, path_, in_size=100, out_size=25, overlap=True, n_fea
         os.makedirs(path_)
 
     for i, filename in enumerate(sorted(glob.glob(path + '/*.txt'))):
+        print(filename)
         X_in, X_out = file_to_Xs(filename, in_size, out_size, overlap, n_features, train_portion, train)
         if not i:
             print('I am processing the first file for you.')
