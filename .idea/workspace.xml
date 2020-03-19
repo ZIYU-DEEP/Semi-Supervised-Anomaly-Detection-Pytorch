@@ -45,13 +45,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="212" column="34" lean-forward="true" selection-start-line="212" selection-start-column="34" selection-end-line="212" selection-end-column="34" />
+            <state relative-caret-position="474">
+              <caret line="220" selection-start-line="220" selection-end-line="220" selection-end-column="60" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/deepsad_optimizer.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="157">
@@ -70,11 +70,11 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main/main_deepsad.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="204" column="45" lean-forward="true" selection-start-line="204" selection-start-column="45" selection-end-line="204" selection-end-column="45" />
+            <state relative-caret-position="474">
+              <caret line="254" selection-start-line="254" selection-end-line="254" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -131,6 +131,7 @@
       <find>test_list</find>
       <find>n_features</find>
       <find>loader_eval_name</find>
+      <find>self.eps</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -149,9 +150,9 @@
         <option value="$PROJECT_DIR$/model/forecast_unsupervised_optimizer.py" />
         <option value="$PROJECT_DIR$/model/forecast_exp_optimizer.py" />
         <option value="$PROJECT_DIR$/dataset/forecast_dataset.py" />
+        <option value="$PROJECT_DIR$/model/deepsad_optimizer.py" />
         <option value="$PROJECT_DIR$/main/main.py" />
         <option value="$PROJECT_DIR$/main/main_deepsad.py" />
-        <option value="$PROJECT_DIR$/model/deepsad_optimizer.py" />
       </list>
     </option>
   </component>
@@ -350,24 +351,24 @@
     <entry file="file://$PROJECT_DIR$/model/main_model_deepsad.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/deepsad_optimizer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="515" column="69" selection-start-line="515" selection-start-column="61" selection-end-line="515" selection-end-column="69" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="212" column="34" lean-forward="true" selection-start-line="212" selection-start-column="34" selection-end-line="212" selection-end-column="34" />
+        <state relative-caret-position="474">
+          <caret line="220" selection-start-line="220" selection-end-line="220" selection-end-column="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main/main_deepsad.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="204" column="45" lean-forward="true" selection-start-line="204" selection-start-column="45" selection-end-line="204" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/deepsad_optimizer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="515" column="69" selection-start-line="515" selection-start-column="61" selection-end-line="515" selection-end-column="69" />
+        <state relative-caret-position="474">
+          <caret line="254" selection-start-line="254" selection-end-line="254" selection-end-column="60" />
         </state>
       </provider>
     </entry>

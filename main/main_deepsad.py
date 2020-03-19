@@ -222,8 +222,8 @@ for root_abnormal in l_root_abnormal:
 
     root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
 
-    if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
-                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
+    if root_abnormal in ['/net/adv_spectrum/torch_data_deepsad/100/871/abnormal/871_ab_sigOver_10ms',
+                         '/net/adv_spectrum/torch_data_deepsad/100/871/abnormal/871_ab_sigOver_20ms']:
         continue
 
     f.write('######################\n')
