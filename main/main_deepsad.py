@@ -191,7 +191,7 @@ np.save(cut_path, cut)
 # Write the basic test file
 f = open(txt_result_file, 'a')
 f.write('############################################################\n')
-f.write('[Current Time] {}\n').format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 f.write('[DataFrame Name] {}\n'.format(result_df_path))
 f.write('[Normal Folder] {}\n'.format(normal_folder))
 f.write('[Abnormal Filename] {}\n'.format(abnormal_folder))
