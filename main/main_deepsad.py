@@ -4,11 +4,14 @@
 [Author] Lek'Sai Ye, University of Chicago
 [Example Command:]
 > For <supervised training>:
->>> python main_deepsad.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms
+>>> python main_deepsad.py -nf downtown -af downtown_sigOver_10ms -gpu 0
+>>> python main_deepsad.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 1
+>>> python main_deepsad.py -nf 871 -af 871_ab_sigOver_5ms -gpu 1
 
 > For <unsupervised training>:
->>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised
-                           -nf ryerson_train -af ryerson_ab_train_sigOver_10ms
+>>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf downtown -af downtown_sigOver_10ms -gpu 2
+>>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf campus_drive -af campus_drive_sigOver_10ms -gpu 3
+>>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf 871 -af 871_ab_sigOver_5ms -gpu 3
 """
 
 #############################################
@@ -264,7 +267,7 @@ for root_abnormal in l_root_abnormal:
     total_recall = np.array(total_recall)
     mean_recall = total_recall.mean()
     std_recall = total_recall.std()
-    f.write('\n[**Recall Mean**] {}\n\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
+    f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n\n'.format(mean_recall, std_recall))
     print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
 
 f.write('###########################################################\n\n\n\n')
