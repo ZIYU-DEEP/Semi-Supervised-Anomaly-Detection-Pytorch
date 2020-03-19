@@ -2,16 +2,18 @@
 [Title] main.py
 [Description] The main file to run the unsupervised models.
 [Author] Lek'Sai Ye, University of Chicago
-[Example Command:]
+[Example Command]
 > For <supervised training>:
->>> python main_deepsad.py -nf downtown -af downtown_sigOver_10ms -gpu 0
->>> python main_deepsad.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 1
->>> python main_deepsad.py -nf 871 -af 871_ab_sigOver_5ms -gpu 1
+python main_deepsad.py -nf ryerson -af ryerson_ab_train_sigOver_10ms -gpu 2
+python main_deepsad.py -nf downtown -af downtown_sigOver_10ms -gpu 2
+python main_deepsad.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 1
+python main_deepsad.py -nf 871 -af 871_ab_sigOver_5ms -gpu 1
 
 > For <unsupervised training>:
->>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf downtown -af downtown_sigOver_10ms -gpu 2
->>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf campus_drive -af campus_drive_sigOver_10ms -gpu 3
->>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf 871 -af 871_ab_sigOver_5ms -gpu 3
+python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf ryerson -af ryerson_ab_train_sigOver_10ms -gpu 3
+python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf downtown -af downtown_sigOver_10ms -gpu 3
+python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf campus_drive -af campus_drive_sigOver_10ms -gpu 3
+python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised -nf 871 -af 871_ab_sigOver_5ms -gpu 3
 """
 
 #############################################
@@ -102,7 +104,7 @@ txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
 folder_name = '{}_{}_{}_{}'.format(optimizer_, str(pretrain), normal_folder, abnormal_folder)
-out_path = '../results_32/{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
+out_path = '../results_deepsad/{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
 final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
                                                           n_epochs, batch_size)
 if not os.path.exists(out_path): os.makedirs(out_path)
