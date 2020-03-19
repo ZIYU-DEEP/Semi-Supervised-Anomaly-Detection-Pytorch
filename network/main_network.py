@@ -9,7 +9,7 @@ from lstm_net import LSTMNet, LSTMNetStacked
 from lstm_ae_net import LSTMEncoder, LSTMDecoder, LSTMAutoencoder
 
 
-def build_network(net_name='lstm', rep_dim=2):
+def build_network(net_name='lstm', rep_dim=10):
     known_networks = ('lstm', 'lstm_stacked', 'lstm_autoencoder')
     assert net_name in known_networks
 
@@ -26,7 +26,7 @@ def build_network(net_name='lstm', rep_dim=2):
 
     return None
 
-def build_autoencoder(net_name='lstm_autoencoder', rep_dim=2):
+def build_autoencoder(net_name='lstm_autoencoder', rep_dim=10):
     known_networks = ('lstm_autoencoder')
     assert net_name in known_networks
 
