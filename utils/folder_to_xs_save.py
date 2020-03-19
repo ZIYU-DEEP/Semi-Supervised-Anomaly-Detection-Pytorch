@@ -28,12 +28,12 @@ train_portion, train = p.train_portion, p.train
 
 if model == 'deepsad':
     if abnormal_folder:
-        root = 'net/adv_spectrum/data/feature/downsample_10/abnormal'
+        root = '/net/adv_spectrum/data/feature/downsample_10/abnormal'
         root_ = '/net/adv_spectrum/torch_data_deepsad'
         path = '{}/{}/{}_{}'.format(root, abnormal_folder, window_size, predict_size)
         path_ = '{}/{}/{}/abnormal/{}'.format(root_, window_size, normal_folder, abnormal_folder)
     else:
-        root = 'net/adv_spectrum/data/feature/downsample_10/normal'
+        root = '/net/adv_spectrum/data/feature/downsample_10/normal'
         root_ = '/net/adv_spectrum/torch_data_deepsad'
         path = '{}/{}/{}_{}'.format(root, normal_folder, window_size, predict_size)
         path_ = '{}/{}/{}/normal'.format(root_, window_size, normal_folder)
@@ -41,12 +41,12 @@ if model == 'deepsad':
 
 elif model == 'forecast':
     if abnormal_folder:
-        root = 'net/adv_spectrum/data/feature/downsample_10/abnormal'
+        root = '/net/adv_spectrum/data/feature/downsample_10/abnormal'
         root_ = '/net/adv_spectrum/torch_data'
         path = '{}/{}/{}_{}'.format(root, abnormal_folder, window_size, predict_size)
         path_ = '{}/{}/abnormal/{}'.format(root_, normal_folder, abnormal_folder)
     else:
-        root = 'net/adv_spectrum/data/feature/downsample_10/normal'
+        root = '/net/adv_spectrum/data/feature/downsample_10/normal'
         root_ = '/net/adv_spectrum/torch_data'
         path = '{}/{}/{}_{}'.format(root, normal_folder, window_size, predict_size)
         path_ = '{}/{}/normal'.format(root_, normal_folder)
