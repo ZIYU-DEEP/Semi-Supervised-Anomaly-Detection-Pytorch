@@ -203,14 +203,14 @@ f.write('---------------------\n')
 #############################################
 # 3. Model Evaluation
 #############################################
-l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_10ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_20ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP2',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP3',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_NLOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1']
+l_root_abnormal = ['/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_sigOver_5ms',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_sigOver_10ms',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_sigOver_20ms',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_LOS-5M-USRP1',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_LOS-5M-USRP2',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_LOS-5M-USRP3',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_NLOS-5M-USRP1',
+                   '/net/adv_spectrum/torch_data_deepsad/100/{}/abnormal/{}_Dynamics-5M-USRP1']
 
 for root_abnormal in l_root_abnormal:
     print('I am starting evaluation for you.')
