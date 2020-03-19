@@ -216,6 +216,7 @@ def folder_to_Xs_save_deepsad(path, path_, window_size=100, n_features=128, trai
         os.makedirs(path_)
 
     for i, filename in enumerate(sorted(glob.glob(path + '/*.txt'))):
+        print(filename)
         X = file_to_Xs_deepsad(filename, window_size, n_features, train_portion, train)
         if not i:
             print('I am processing the first file for you.')
