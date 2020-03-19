@@ -219,7 +219,7 @@ class DeepSADTrainer(BaseTrainer):
                 losses = torch.where(y == 0,
                                      dist,
                                      self.eta * ((dist + self.eps) **
-                                                 (- 1).float()))
+                                                 (- 1)))
                 loss = torch.mean(losses)
                 loss.backward()
                 optimizer.step()
@@ -258,7 +258,7 @@ class DeepSADTrainer(BaseTrainer):
                 losses = torch.where(y == 0,
                                      dist,
                                      self.eta * ((dist + self.eps) **
-                                                 (- 1).float()))
+                                                 (- 1)))
                 loss = torch.mean(losses)
                 scores = dist
 
@@ -510,7 +510,7 @@ class DeepSADEvaluater(BaseEvaluater):
                 if optimizer_ == 'deepsad':
                     losses = torch.where(y == 0,
                                          dist,
-                                         self.eta * ((dist + self.eps) **(- 1).float()))
+                                         self.eta * ((dist + self.eps) **(- 1)))
                 else:
                     losses = dist
 
