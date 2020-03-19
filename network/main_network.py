@@ -26,7 +26,7 @@ def build_network(net_name='lstm', rep_dim=2):
 
     return None
 
-def build_autoencoder(net_name='lstm_autoencoder'):
+def build_autoencoder(net_name='lstm_autoencoder', rep_dim=2):
     known_networks = ('lstm_autoencoder')
     assert net_name in known_networks
 

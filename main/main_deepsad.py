@@ -48,6 +48,8 @@ parser.add_argument('--abnormal_folder', type=str, default='ryerson_ab_train_sig
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_autoencoder',
                     help='[Choice]: lstm_autoencoder')
+parser.add_argument('--rep_dim', type=int, default=2,
+                    help='Only apply to DeepSAD model - the latent dimension.')
 
 # Arguments for main_model
 parser.add_argument('--pretrain', type=bool, default=True,
@@ -80,7 +82,7 @@ p = parser.parse_args()
 # Extract the arguments
 random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.loader_eval_name
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
-net_name, pretrain, load_model = p.net_name, p.pretrain, p.load_model
+net_name, rep_dim, pretrain, load_model = p.net_name, p.rep_dim, p.pretrain, p.load_model
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
 lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
