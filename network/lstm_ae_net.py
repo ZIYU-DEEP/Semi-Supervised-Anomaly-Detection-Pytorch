@@ -4,7 +4,7 @@ Description: The LSTM network.
 Author: Lek'Sai Ye, University of Chicago
 """
 
-
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from base_net import BaseNet
