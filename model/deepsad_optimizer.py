@@ -21,7 +21,7 @@ class AETrainer(BaseTrainer):
                  optimizer_name: str = 'adam',
                  lr: float = 0.001,
                  n_epochs: int = 60,
-                 lr_milestones: (50, 100, 150, 200),
+                 lr_milestones: tuple=(50, 100, 150, 200),
                  batch_size: int = 128,
                  weight_decay: float = 1e-6,
                  device: str = 'cuda',
