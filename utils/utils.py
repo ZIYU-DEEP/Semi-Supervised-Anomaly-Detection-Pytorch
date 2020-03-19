@@ -1,6 +1,6 @@
 """
 Title: utils.py
-Description: Helper functions.
+Description: Helper functions for loading data.
 Author: Lek'Sai Ye, University of Chicago
 """
 
