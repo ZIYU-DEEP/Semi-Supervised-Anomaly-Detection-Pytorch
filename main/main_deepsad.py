@@ -1,7 +1,14 @@
 """
-Title: main.py
-Description: The main file to run the unsupervised models.
-Author: Lek'Sai Ye, University of Chicago
+[Title] main.py
+[Description] The main file to run the unsupervised models.
+[Author] Lek'Sai Ye, University of Chicago
+[Example Command:]
+> For <supervised training>:
+>>> python main_deepsad.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms
+
+> For <unsupervised training>:
+>>> python main_deepsad.py -ln deepsad_unsupervised -op deepsad_unsupervised
+                           -nf ryerson_train -af ryerson_ab_train_sigOver_10ms
 """
 
 #############################################
@@ -13,8 +20,9 @@ sys.path.append('../dataset/')
 sys.path.append('../network/')
 sys.path.append('../model/')
 
-import glob
 import os
+import glob
+import time
 import argparse
 import numpy as np
 import pandas as pd
@@ -33,30 +41,30 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
-parser.add_argument('--loader_name', type=str, default='deepsad',
+parser.add_argument('-ln', '--loader_name', type=str, default='deepsad',
                     help='[Choice]: deepsad, deepsad_unsupervised')
 parser.add_argument('--loader_eval_name', type=str, default='deepsad_eval')
 parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data_deepsad/100',
                     help='[Choice]: /net/adv_spectrum/torch_data_deepsad')
-parser.add_argument('--normal_folder', type=str, default='ryerson_train',
-                    help='[Example]: downtown, ryerson_train, campus_drive')
-parser.add_argument('--abnormal_folder', type=str, default='ryerson_ab_train_sigOver_10ms',
+parser.add_argument('-nf', '--normal_folder', type=str, default='ryerson_train',
+                    help='[Example]: downtown, ryerson_train, campus_drive, 871')
+parser.add_argument('-af', '--abnormal_folder', type=str, default='ryerson_ab_train_sigOver_10ms',
                     help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_autoencoder',
                     help='[Choice]: lstm_autoencoder')
-parser.add_argument('--rep_dim', type=int, default=2,
+parser.add_argument('-rp', '--rep_dim', type=int, default=10,
                     help='Only apply to DeepSAD model - the latent dimension.')
 
 # Arguments for main_model
-parser.add_argument('--pretrain', type=bool, default=True,
+parser.add_argument('-pt', '--pretrain', type=bool, default=True,
                     help='[Choice]: Only apply to DeepSAD model: True, False')
 parser.add_argument('--load_model', type=str, default='',
                     help='[Example]: ./deepsad_ryerson_train_ryerson_ab_train_sigOver_10ms/net_lstm_encoder_eta_100_epochs_100_batch_128/model.tar')
-parser.add_argument('--optimizer_', type=str, default='deepsad',
+parser.add_argument('-op', '--optimizer_', type=str, default='deepsad',
                     help='[Choice]: deepsad, deepsad_unsupervised')
-parser.add_argument('--eta_str', default=100,
+parser.add_argument('-et', '--eta_str', default=100,
                     help='The _% representation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
@@ -65,7 +73,7 @@ parser.add_argument('--ae_n_epochs', type=int, default=100)
 parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
-parser.add_argument('--device_no', type=int, default=1)
+parser.add_argument('-gpu', '--device_no', type=int, default=1)
 parser.add_argument('--n_jobs_dataloader', type=int, default=0)
 parser.add_argument('--save_ae', type=bool, default=True,
                     help='Only apply to Deep SAD model.')
@@ -182,7 +190,8 @@ np.save(cut_path, cut)
 
 # Write the basic test file
 f = open(txt_result_file, 'a')
-f.write('=====================\n')
+f.write('############################################################\n')
+f.write('[Current Time] {}\n').format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 f.write('[DataFrame Name] {}\n'.format(result_df_path))
 f.write('[Normal Folder] {}\n'.format(normal_folder))
 f.write('[Abnormal Filename] {}\n'.format(abnormal_folder))
@@ -224,7 +233,7 @@ for root_abnormal in l_root_abnormal:
                          '/net/adv_spectrum/torch_data_deepsad/100/871/abnormal/871_ab_sigOver_20ms']:
         continue
 
-    f.write('######################\n')
+    f.write('============================================================\n')
     f.write('Results for {}:\n'.format(root_abnormal))
     total_recall = []
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
@@ -248,16 +257,16 @@ for root_abnormal in l_root_abnormal:
         total_recall.append(recall)
 
         # Save the results
-        f.write('---------------------\n')
+        f.write('--------------------\n')
         f.write('[Recall for file {}] {}\n'.format(i, recall))
         print('[Recall for file {}] {}\n'.format(i, recall))
 
     total_recall = np.array(total_recall)
     mean_recall = total_recall.mean()
     std_recall = total_recall.std()
-    f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
+    f.write('\n[**Recall Mean**] {}\n\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
     print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
 
-f.write('=====================\n\n')
+f.write('###########################################################\n\n\n\n')
 f.close()
 print('Finished. Now I am going to bed. Bye.')
