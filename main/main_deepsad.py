@@ -48,8 +48,6 @@ parser.add_argument('--abnormal_folder', type=str, default='ryerson_ab_train_sig
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_autoencoder',
                     help='[Choice]: lstm_autoencoder')
-parser.add_argument('--pretrain', type=bool, default=True,
-                    help='[Choice]: Only apply to DeepSAD model: True, False')
 
 # Arguments for main_model
 parser.add_argument('--pretrain', type=bool, default=True,
