@@ -63,6 +63,7 @@ parser.add_argument('--eta_str', default=100,
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--n_epochs', type=int, default=100)
+parser.add_argument('--ae_n_epochs', type=int, default=100)
 parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
@@ -84,7 +85,7 @@ random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.l
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
 net_name, rep_dim, pretrain, load_model = p.net_name, p.rep_dim, p.pretrain, p.load_model
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
-lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
+lr, n_epochs, ae_n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size, p.ae_n_epochs
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
 weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jobs_dataloader
 save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
@@ -137,10 +138,11 @@ if load_model:
                      map_location=device)
 
 if pretrain:
+    print('I am pre-training for you.')
     model.pretrain(dataset,
                    optimizer_name,
                    lr,
-                   n_epochs,
+                   ae_n_epochs,
                    lr_milestones,
                    batch_size,
                    weight_decay,
