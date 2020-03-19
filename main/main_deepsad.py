@@ -91,7 +91,7 @@ txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
 folder_name = '{}_{}_{}_{}'.format(optimizer_, str(pretrain), normal_folder, abnormal_folder)
-out_path = './{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
+out_path = '../results/{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
 final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
                                                           n_epochs, batch_size)
 if not os.path.exists(out_path): os.makedirs(out_path)
