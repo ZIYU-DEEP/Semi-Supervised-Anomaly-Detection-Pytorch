@@ -213,16 +213,16 @@ for root_abnormal in l_root_abnormal:
         _, _, scores = zip(*model_eval.results['test_scores'])
         y = [1 if e > cut else 0 for e in scores]
         recall = sum(y) / len(y)
-        total_recal.append(recall)
+        total_recall.append(recall)
 
         # Save the results
         f.write('---------------------\n')
         f.write('[Recall for file {}] {}\n'.format(i, recall))
         # print('[Recall for file {}] {}\n'.format(i, recall))
 
-    total_recal = np.array(total_recal)
-    mean_recall = total_recal.mean()
-    std_recall = total_recal.std()
+    total_recall = np.array(total_recall)
+    mean_recall = total_recall.mean()
+    std_recall = total_recall.std()
     f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
     print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
 
