@@ -72,7 +72,6 @@ def window_data(array, in_size, out_size, overlap=False, n_features=128):
 
     index_in = [list(range(i, i + in_size)) for i in start_index]
     index_out = [list(range(i + in_size, i + in_size + out_size)) for i in start_index]
-    print(index_out)
 
     array_in = array[index_in, :]
     array_out = array[index_out, :]
