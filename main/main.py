@@ -218,7 +218,7 @@ for root_abnormal in l_root_abnormal:
         # Save the results
         f.write('---------------------\n')
         f.write('[Recall for file {}] {}\n'.format(i, recall))
-        # print('[Recall for file {}] {}\n'.format(i, recall))
+        print('[Recall for file {}] {}\n'.format(i, recall))
 
     total_recall = np.array(total_recall)
     mean_recall = total_recall.mean()
