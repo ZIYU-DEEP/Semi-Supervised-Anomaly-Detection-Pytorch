@@ -38,7 +38,7 @@ parser.add_argument('--random_state', type=int, default=42)
 parser.add_argument('--loader_name', type=str, default='deepsad',
                     help='[Choice]: deepsad, deepsad_unsupervised')
 parser.add_argument('--loader_eval_name', type=str, default='deepsad_eval')
-parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data_deepsad',
+parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data_deepsad/100',
                     help='[Choice]: /net/adv_spectrum/torch_data_deepsad')
 parser.add_argument('--normal_folder', type=str, default='ryerson_train',
                     help='[Example]: downtown, ryerson_train, campus_drive')
