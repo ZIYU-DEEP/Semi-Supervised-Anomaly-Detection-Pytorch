@@ -26,9 +26,7 @@ from main_model_forecast import *
 from main_model_deepsad import *
 
 # Example Command:
-# python main.py --loader_name forecast --loader_eval_name forecast_eval --optimizer_ forecast_exp
-# --root /net/adv_spectrum/torch_data --normal_folder ryerson_train --abnormal_folder ryerson_ab_train_sigOver_10ms
-# --net_name lstm_stacked --device_no 2
+# python main_deepsad.py --loader_name deepsad_unsupervised --optimizer_ deepsad_unsupervised
 
 # Initialize the parser
 parser = argparse.ArgumentParser()
@@ -92,7 +90,7 @@ save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
 txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
-folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
+folder_name = '{}_{}_{}_{}'.format(optimizer_, str(pretrain), normal_folder, abnormal_folder)
 out_path = './{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
 final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
                                                           n_epochs, batch_size)
