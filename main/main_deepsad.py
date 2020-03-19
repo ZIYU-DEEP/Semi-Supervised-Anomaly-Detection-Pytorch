@@ -23,6 +23,7 @@ from pathlib import Path
 from main_loading import *
 from main_network import *
 from main_model_forecast import *
+from main_model_deepsad import *
 
 # Example Command:
 # python main.py --loader_name forecast --loader_eval_name forecast_eval --optimizer_ forecast_exp
@@ -34,23 +35,29 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
-parser.add_argument('--loader_name', type=str, default='forecast',
-                    help='[Choice]: forecast, forecast_unsupervised')
-parser.add_argument('--loader_eval_name', type=str, default='forecast_eval')
-parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data',
-                    help='[Choice]: .../torch_data, .../torch_data_deepsad')
-parser.add_argument('--normal_folder', type=str, default='downtown',
+parser.add_argument('--loader_name', type=str, default='deepsad',
+                    help='[Choice]: deepsad, deepsad_unsupervised')
+parser.add_argument('--loader_eval_name', type=str, default='deepsad_eval')
+parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data_deepsad',
+                    help='[Choice]: /net/adv_spectrum/torch_data_deepsad')
+parser.add_argument('--normal_folder', type=str, default='ryerson_train',
                     help='[Example]: downtown, ryerson_train, campus_drive')
-parser.add_argument('--abnormal_folder', type=str, default='downtown_sigOver_10ms',
+parser.add_argument('--abnormal_folder', type=str, default='ryerson_ab_train_sigOver_10ms',
                     help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
 # Arguments for main_network
-parser.add_argument('--net_name', type=str, default='lstm_stacked',
-                    help='[Choice]: lstm, lstm_stacked')
+parser.add_argument('--net_name', type=str, default='lstm_autoencoder',
+                    help='[Choice]: lstm_autoencoder')
+parser.add_argument('--pretrain', type=bool, default=True,
+                    help='[Choice]: Only apply to DeepSAD model: True, False')
 
 # Arguments for main_model
-parser.add_argument('--optimizer_', type=str, default='forecast_exp',
-                    help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
+parser.add_argument('--pretrain', type=bool, default=True,
+                    help='[Choice]: Only apply to DeepSAD model: True, False')
+parser.add_argument('--load_model', type=str, default='',
+                    help='[Example]: ./deepsad_ryerson_train_ryerson_ab_train_sigOver_10ms/net_lstm_encoder_eta_100_epochs_100_batch_128/model.tar')
+parser.add_argument('--optimizer_', type=str, default='deepsad',
+                    help='[Choice]: deepsad, deepsad_unsupervised')
 parser.add_argument('--eta_str', default=100,
                     help='The _% representation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
@@ -63,7 +70,7 @@ parser.add_argument('--device_no', type=int, default=1)
 parser.add_argument('--n_jobs_dataloader', type=int, default=0)
 parser.add_argument('--save_ae', type=bool, default=True,
                     help='Only apply to Deep SAD model.')
-parser.add_argument('--load_ae', type=bool, default=False,
+parser.add_argument('--load_ae', type=bool, default=True,
                     help='Only apply to Deep SAD model.')
 parser.add_argument('--fp_rate', type=float, default=0.05,
                     help='The false positive rate as the judge threshold.')
@@ -75,7 +82,7 @@ p = parser.parse_args()
 # Extract the arguments
 random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.loader_eval_name
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
-net_name = p.net_name
+net_name, pretrain, load_model = p.net_name, p.pretrain, p.load_model
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
 lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
@@ -97,6 +104,7 @@ txt_result_file = '{}/{}'.format(out_path, txt_filename)
 # Define the path for others
 model_path = Path(final_path) / 'model.tar'
 results_path = Path(final_path) / 'results.json'
+ae_results_path = Path(final_path) / 'ae_results.json'
 result_df_path = Path(final_path) / 'result_df.pkl'
 cut_path = Path(final_path) / 'cut.pkl'
 
@@ -110,14 +118,37 @@ torch.manual_seed(random_state)
 #############################################
 # 1. Model Training
 #############################################
-# Loading data
+# Load data
 dataset = load_dataset(loader_name, root, normal_folder, abnormal_folder)
 
-# Loading model
-model = ForecastModel(optimizer_, eta)
+# Initialize model
+if loader_name in ['forecast', 'forecast_unsupervised']:
+    model = ForecastModel(optimizer_, eta)
+    model.set_network(net_name)
+if loader_name in ['deepsad', 'deepsad_unsupervised']:
+    model = DeepSADModel(optimizer_, eta)
+    model.set_network(net_name)
+
+# Load model if specified
+if load_model:
+    print('Loading model from {}'.format(load_model))
+    model.load_model(model_path=load_model,
+                     load_ae=True,
+                     map_location=device)
+
+if pretrain:
+    model.pretrain(dataset,
+                   optimizer_name,
+                   lr,
+                   n_epochs,
+                   lr_milestones,
+                   batch_size,
+                   weight_decay,
+                   device,
+                   n_jobs_dataloader)
+    model.save_ae_results(export_json=ae_results_path)
 
 # Training model
-model.set_network(net_name)
 model.train(dataset, eta, optimizer_name, lr, n_epochs, lr_milestones,
             batch_size, weight_decay, device, n_jobs_dataloader)
 
@@ -190,10 +221,7 @@ for root_abnormal in l_root_abnormal:
     root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
 
     if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
-                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms',
-                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_LOS-5M-USRP3',
-                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_NLOS-5M-USRP1',
-                         '/net/adv_spectrum/torch_data/ryerson_train/abnormal/ryerson_ab_train_Dynamics-5M-USRP1']:
+                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
         continue
 
     f.write('######################\n')
@@ -204,12 +232,16 @@ for root_abnormal in l_root_abnormal:
         # Load dataset for evaluation
         dataset_eval = load_dataset(loader_eval_name, folder)
         # Load model for evaluation
-        model_eval = ForecastModelEval(optimizer_, eta=eta)
+        model_eval = DeepSADModelEval(optimizer_, eta)
         model_eval.set_network(net_name)
         model_eval.load_model(model_path=model_path, map_location=device)
 
         # Test the model
-        model_eval.test(dataset_eval, device=device, eta=eta)
+        model_eval.test(dataset_eval,
+                        eta=eta,
+                        batch_size=batch_size,
+                        device=device,
+                        n_jobs_dataloader=n_jobs_dataloader)
         _, _, scores = zip(*model_eval.results['test_scores'])
         y = [1 if e > cut else 0 for e in scores]
         recall = sum(y) / len(y)

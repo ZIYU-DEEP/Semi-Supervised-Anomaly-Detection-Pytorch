@@ -19,7 +19,7 @@ from main_network import build_network
 # --------------------------------------------
 # 3.3. (a) Model Object for training
 # --------------------------------------------
-class Model:
+class ForecastModel:
     def __init__(self,
                  optimizer_: str = 'forecast_exp',
                  eta: float = 1.0):
@@ -81,7 +81,7 @@ class Model:
 # --------------------------------------------
 # 3.3. (b) Model Object for Evaluating
 # --------------------------------------------
-class ModelEval:
+class ForecastModelEval:
     def __init__(self,
                  optimizer_,
                  eta: float = 1.0):
