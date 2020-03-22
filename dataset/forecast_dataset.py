@@ -41,6 +41,11 @@ class ForecastDataset(Dataset):
         y_nega = np.zeros(X_nega_in.shape[0])
         y_posi = np.ones(X_posi_in.shape[0])
 
+        # This line is optional, just to limit the data for anomaly
+        if len(X_posi_in) > len(X_nega_in):
+            X_posi_in = X_posi_in[: len(X_nega_in)]
+            X_posi_out = X_posi_out[: len(X_nega_out)]          
+
         print('Concatenating data!')
         # Note that we do not do shuffling here
         # Rather, we will shuffle them at the DataLoader

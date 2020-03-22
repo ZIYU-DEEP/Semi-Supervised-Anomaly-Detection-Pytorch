@@ -35,6 +35,10 @@ class DeepSADDataset(Dataset):
         y_nega = np.zeros(X_nega.shape[0])
         y_posi = np.ones(X_posi.shape[0])
 
+        # This line is optional, just to limit the data for anomaly
+        if len(X_posi) > len(X_nega):
+            X_posi = X_posi[: len(X_nega)]
+
         print('Concatenating data!')
         # Note that we do not do shuffling here
         # Rather, we will shuffle them at the DataLoader

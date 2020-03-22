@@ -38,8 +38,6 @@ from main_network import *
 from main_model_forecast import *
 from main_model_deepsad import *
 
-# Example Command:
-# python main_deepsad.py --loader_name deepsad_unsupervised --optimizer_ deepsad_unsupervised
 
 # Initialize the parser
 parser = argparse.ArgumentParser()

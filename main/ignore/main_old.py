@@ -1,19 +1,19 @@
 """
-[Title] main.py
-[Description] The main file to run the unsupervised models.
-[Author] Lek'Sai Ye, University of Chicago
+Title: main.py
+Description: The main file to run the unsupervised models.
+Author: Lek'Sai Ye, University of Chicago
 [Example Command]
 > For <supervised training>:
->>> python main.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 2
->>> python main.py -nf downtown -af downtown_sigOver_10ms -gpu 2
->>> python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 2
->>> python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 2
+python main.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 2
+python main.py -nf downtown -af downtown_sigOver_10ms -gpu 2
+python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 2
+python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 2
 
 > For <unsupervised training>:
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -gpu 1
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -gpu 3
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -gpu 3
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -gpu 2
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -gpu 1
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -gpu 2
 """
 
 #############################################
@@ -28,7 +28,6 @@ sys.path.append('../model/')
 import os
 import glob
 import time
-import torch
 import argparse
 import numpy as np
 import pandas as pd
@@ -46,11 +45,10 @@ parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
 parser.add_argument('-ln', '--loader_name', type=str, default='forecast',
-                    help='[Choice]: forecast, ..._unsupervised, deepsad, ..._unsupervised')
-parser.add_argument('-le', '--loader_eval_name', type=str, default='forecast_eval',
-                    help='forecast_eval, deepsad_eval')
-parser.add_argument('-rt', '--root', type=str, default='/net/adv_spectrum/torch_data',
-                    help='[Choice]: .../torch_data, .../torch_data_deepsad/100')
+                    help='[Choice]: forecast, forecast_unsupervised')
+parser.add_argument('--loader_eval_name', type=str, default='forecast_eval')
+parser.add_argument('--root', type=str, default='/net/adv_spectrum/torch_data',
+                    help='[Choice]: .../torch_data, .../torch_data_deepsad')
 parser.add_argument('-nf', '--normal_folder', type=str, default='downtown',
                     help='[Example]: downtown, ryerson_train, campus_drive')
 parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigOver_10ms',
@@ -58,15 +56,9 @@ parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigO
 
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_stacked',
-                    help='[Choice]: lstm, lstm_stacked, lstm_autoencoder')
-parser.add_argument('-rp', '--rep_dim', type=int, default=10,
-                    help='Only apply to DeepSAD model - the latent dimension.')
+                    help='[Choice]: lstm, lstm_stacked')
 
 # Arguments for main_model
-parser.add_argument('-pt', '--pretrain', type=bool, default=True,
-                    help='[Choice]: Only apply to DeepSAD model: True, False')
-parser.add_argument('--load_model', type=str, default='',
-                    help='[Example]: ./deepsad_ryerson_train_ryerson_ab_train_sigOver_10ms/net_lstm_encoder_eta_100_epochs_100_batch_128/model.tar')
 parser.add_argument('-op', '--optimizer_', type=str, default='forecast_exp',
                     help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
 parser.add_argument('-et', '--eta_str', default=100,
@@ -74,7 +66,6 @@ parser.add_argument('-et', '--eta_str', default=100,
 parser.add_argument('--optimizer_name', type=str, default='adam')
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--n_epochs', type=int, default=100)
-parser.add_argument('--ae_n_epochs', type=int, default=100)
 parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
 parser.add_argument('--weight_decay', type=float, default=1e-6)
@@ -84,6 +75,8 @@ parser.add_argument('--save_ae', type=bool, default=True,
                     help='Only apply to Deep SAD model.')
 parser.add_argument('--load_ae', type=bool, default=False,
                     help='Only apply to Deep SAD model.')
+parser.add_argument('--fp_rate', type=float, default=0.05,
+                    help='The false positive rate as the judge threshold.')
 
 # Arguments for output_paths
 parser.add_argument('--txt_filename', type=str, default='full_results.txt')
@@ -92,26 +85,19 @@ p = parser.parse_args()
 # Extract the arguments
 random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.loader_eval_name
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
-net_name, rep_dim, pretrain, load_model = p.net_name, p.rep_dim, p.pretrain, p.load_model
+net_name = p.net_name
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
-lr, n_epochs, ae_n_epochs, batch_size = p.lr, p.n_epochs, p.ae_n_epochs, p.batch_size
+lr, n_epochs, batch_size = p.lr, p.n_epochs, p.batch_size
 lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
 weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jobs_dataloader
-save_ae, load_ae = p.save_ae, p.load_ae
+save_ae, load_ae, fp_rate = p.save_ae, p.load_ae, p.fp_rate
 txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
-if loader_eval_name == 'forecast_eval':
-    folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
-    out_path = '/net/adv_spectrum/torch_models/forecast/{}'.format(folder_name)
-    final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
-                                                              n_epochs, batch_size)
-
-elif loader_eval_name == 'deepsad_eval':
-    folder_name = '{}_{}_{}_{}'.format(optimizer_, str(pretrain), normal_folder, abnormal_folder)
-    out_path = '/net/adv_spectrum/torch_models/deepsad/{}'.format(folder_name)
-    final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
-                                                              n_epochs, batch_size)
+folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
+out_path = '../result_forecast/{}'.format(folder_name)  # change '.' to '/net/adv_spectrum/torch_model' in future
+final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
+                                                          n_epochs, batch_size)
 if not os.path.exists(out_path): os.makedirs(out_path)
 if not os.path.exists(final_path): os.makedirs(final_path)
 
@@ -121,10 +107,8 @@ txt_result_file = '{}/{}'.format(out_path, txt_filename)
 # Define the path for others
 model_path = Path(final_path) / 'model.tar'
 results_path = Path(final_path) / 'results.json'
-ae_results_path = Path(final_path) / 'ae_results.json'
 result_df_path = Path(final_path) / 'result_df.pkl'
-cut_95_path = Path(final_path) / 'cut_95.npy'
-cut_99_path = Path(final_path) / 'cut_99.npy'
+cut_path = Path(final_path) / 'cut.pkl'
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
@@ -136,34 +120,14 @@ torch.manual_seed(random_state)
 #############################################
 # 1. Model Training
 #############################################
-# Initialize data
+# Loading data
 dataset = load_dataset(loader_name, root, normal_folder, abnormal_folder)
 
-# Load Deep SAD model
-if loader_name in ['deepsad', 'deepsad_unsupervised']:
-    # Define model
-    model = DeepSADModel(optimizer_, eta)
-    model.set_network(net_name)
-
-    # Load other models if specified
-    if load_model:
-        print('Loading model from {}'.format(load_model))
-        model.load_model(model_path=load_model,
-                         load_ae=True,
-                         map_location=device)
-    # Pretrain if specified
-    if pretrain:
-        print('I am pre-training for you.')
-        model.pretrain(dataset, optimizer_name, lr, ae_n_epochs, lr_milestones,
-                       batch_size, weight_decay, device, n_jobs_dataloader)
-        model.save_ae_results(export_json=ae_results_path)
-
-# Load Forecast model
-elif loader_name in ['forecast', 'forecast_unsupervised']:
-    model = ForecastModel(optimizer_, eta)
-    model.set_network(net_name)
+# Loading model
+model = ForecastModel(optimizer_, eta)
 
 # Training model
+model.set_network(net_name)
 model.train(dataset, eta, optimizer_name, lr, n_epochs, lr_milestones,
             batch_size, weight_decay, device, n_jobs_dataloader)
 
@@ -191,14 +155,9 @@ df_normal = result_df[result_df.labels == 0]
 df_abnormal = result_df[result_df.labels == 1]
 
 # Save the threshold
-cut_95 = df_normal.scores.quantile(0.95)
-y_95 = [1 if e > cut_95 else 0 for e in df_abnormal['scores'].values]
-np.save(cut_95_path, cut_95)
-
-cut_99 = df_normal.scores.quantile(0.99)
-y_99 = [1 if e > cut_99 else 0 for e in df_abnormal['scores'].values]
-np.save(cut_99_path, cut_99)
-
+cut = df_normal.scores.quantile(1 - fp_rate)
+y = [1 if e > cut else 0 for e in df_abnormal['scores'].values]
+np.save(cut_path, cut)
 
 # Write the basic test file
 f = open(txt_result_file, 'a')
@@ -210,21 +169,18 @@ f.write('[Abnormal Filename] {}\n'.format(abnormal_folder))
 f.write('[Model] {}\n'.format(optimizer_))
 f.write('[Eta] {}\n'.format(eta))
 f.write('[Epochs] {}\n'.format(n_epochs))
-f.write('[Cut Threshold with 0.05 FP Rate] {}\n'.format(cut_95))
-f.write('[Cut Threshold with 0.01 FP Rate] {}\n'.format(cut_99))
+f.write('[False Positive Rate] {}\n'.format(fp_rate))
+f.write('[Cut Threshold] {}\n'.format(cut))
 if len(df_abnormal):
     f.write('[A/N Ratio] 1:{}\n'.format(len(df_abnormal) / len(df_normal)))
-    f.write('[Recall for {} (FP = 0.05)] {}\n'.format('TEST', sum(y_95) / len(y_95)))
-    f.write('[Recall for {} (FP = 0.01)] {}\n'.format('TEST', sum(y_99) / len(y_99)))
+    f.write('[Train AUC] {}\n'.format(model.results['test_auc']))
+    f.write('[Recall for {}] {}\n'.format('TEST', sum(y) / len(y)))
 f.write('---------------------\n')
-f.close()
 
 
 #############################################
 # 3. Model Evaluation
 #############################################
-f = open(txt_result_file, 'a')
-
 l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_10ms',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_20ms',
@@ -260,62 +216,33 @@ for root_abnormal in l_root_abnormal:
 
     f.write('============================================================\n')
     f.write('Results for {}:\n'.format(root_abnormal))
-
-    total_recall_95 = []
-    total_recall_99 = []
+    total_recall = []
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
-        # Let everyone know which file I am processing
         print(folder)
-
         # Load dataset for evaluation
         dataset_eval = load_dataset(loader_eval_name, folder)
-
         # Load model for evaluation
-        if loader_eval_name in ['forecast_eval']:
-            model_eval = ForecastModelEval(optimizer_, eta=eta)
-        elif loader_eval_name in ['deepsad_eval']:
-            model_eval = DeepSADModelEval(optimizer_, eta=eta)
-
+        model_eval = ForecastModelEval(optimizer_, eta=eta)
         model_eval.set_network(net_name)
         model_eval.load_model(model_path=model_path, map_location=device)
 
         # Test the model
-        model_eval.test(dataset_eval,
-                        eta=eta,
-                        batch_size=batch_size,
-                        device=device,
-                        n_jobs_dataloader=n_jobs_dataloader)
-
+        model_eval.test(dataset_eval, device=device, eta=eta)
         _, _, scores = zip(*model_eval.results['test_scores'])
+        y = [1 if e > cut else 0 for e in scores]
+        recall = sum(y) / len(y)
+        total_recall.append(recall)
+
+        # Save the results
         f.write('---------------------\n')
+        f.write('[Recall for file {}] {}\n'.format(i, recall))
+        print('[Recall for file {}] {}\n'.format(i, recall))
 
-        # Record results when FP = 0.05
-        y_95 = [1 if e > cut_95 else 0 for e in scores]
-        recall_95 = sum(y_95) / len(y_95)
-        total_recall_95.append(recall_95)
-        f.write('[Recall for file {} (FP = 0.05)] {}\n'.format(i, recall_95))
-
-        # Record results when FP = 0.01
-        y_99 = [1 if e > cut_99 else 0 for e in scores]
-        recall_99 = sum(y_99) / len(y_99)
-        total_recall_99.append(recall_99)
-        f.write('[Recall for file {} (FP = 0.01)] {}\n'.format(i, recall_99))
-
-    # Save averaged results when FP = 0.05
-    mean_recall_95 = np.array(total_recall_95).mean()
-    std_recall_95 = np.array(total_recall_95).std()
-    f.write('---------------------\n')
-    f.write('[FP rate] 0.05')
-    f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n\n'.format(mean_recall_95, std_recall_95))
-    print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall_95, std_recall_95))
-
-    # Save averaged results when FP = 0.01
-    mean_recall_99 = np.array(total_recall_99).mean()
-    std_recall_99 = np.array(total_recall_99).std()
-    f.write('---------------------\n')
-    f.write('[FP rate] 0.01')
-    f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n\n'.format(mean_recall_99, std_recall_99))
-    print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall_99, std_recall_99))
+    total_recall = np.array(total_recall)
+    mean_recall = total_recall.mean()
+    std_recall = total_recall.std()
+    f.write('\n[**Recall Mean**] {}\n[**Recall std**] {}\n\n'.format(mean_recall, std_recall))
+    print('\n[**Recall Mean**] {}\n[**Recall std**] {}\n'.format(mean_recall, std_recall))
 
 f.write('###########################################################\n\n\n\n')
 f.close()

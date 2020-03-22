@@ -45,8 +45,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
-parser.add_argument('-ln', '--loader_name', type=str, default='forecast',
-                    help='[Choice]: forecast, ..._unsupervised, deepsad, ..._unsupervised')
 parser.add_argument('-le', '--loader_eval_name', type=str, default='forecast_eval',
                     help='forecast_eval, deepsad_eval')
 parser.add_argument('-rt', '--root', type=str, default='/net/adv_spectrum/torch_data',
@@ -59,45 +57,31 @@ parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigO
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_stacked',
                     help='[Choice]: lstm, lstm_stacked, lstm_autoencoder')
-parser.add_argument('-rp', '--rep_dim', type=int, default=10,
-                    help='Only apply to DeepSAD model - the latent dimension.')
 
 # Arguments for main_model
 parser.add_argument('-pt', '--pretrain', type=bool, default=True,
                     help='[Choice]: Only apply to DeepSAD model: True, False')
-parser.add_argument('--load_model', type=str, default='',
-                    help='[Example]: ./deepsad_ryerson_train_ryerson_ab_train_sigOver_10ms/net_lstm_encoder_eta_100_epochs_100_batch_128/model.tar')
 parser.add_argument('-op', '--optimizer_', type=str, default='forecast_exp',
                     help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
 parser.add_argument('-et', '--eta_str', default=100,
                     help='The _% representation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
-parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--n_epochs', type=int, default=100)
-parser.add_argument('--ae_n_epochs', type=int, default=100)
-parser.add_argument('--lr_milestones', type=str, default='50_100_150')
 parser.add_argument('--batch_size', type=int, default=128)
-parser.add_argument('--weight_decay', type=float, default=1e-6)
 parser.add_argument('-gpu', '--device_no', type=int, default=1)
 parser.add_argument('--n_jobs_dataloader', type=int, default=0)
-parser.add_argument('--save_ae', type=bool, default=True,
-                    help='Only apply to Deep SAD model.')
-parser.add_argument('--load_ae', type=bool, default=False,
-                    help='Only apply to Deep SAD model.')
 
 # Arguments for output_paths
 parser.add_argument('--txt_filename', type=str, default='full_results.txt')
 p = parser.parse_args()
 
 # Extract the arguments
-random_state, loader_name, loader_eval_name = p.random_state, p.loader_name, p.loader_eval_name
+random_state, loader_eval_name = p.random_state, p.loader_eval_name
 root, normal_folder, abnormal_folder = p.root, p.normal_folder, p.abnormal_folder
-net_name, rep_dim, pretrain, load_model = p.net_name, p.rep_dim, p.pretrain, p.load_model
+net_name, pretrain = p.net_name, p.pretrain
 optimizer_, eta_str, optimizer_name = p.optimizer_, p.eta_str, p.optimizer_name
-lr, n_epochs, ae_n_epochs, batch_size = p.lr, p.n_epochs, p.ae_n_epochs, p.batch_size
-lr_milestones = tuple(int(i) for i in p.lr_milestones.split('_'))
-weight_decay, device_no, n_jobs_dataloader = p.weight_decay, p.device_no, p.n_jobs_dataloader
-save_ae, load_ae = p.save_ae, p.load_ae
+n_epochs, batch_size = p.n_epochs, p.batch_size
+device_no, n_jobs_dataloader = p.device_no, p.n_jobs_dataloader
 txt_filename = p.txt_filename
 
 # Define folder to save the model and relating results
@@ -120,105 +104,17 @@ txt_result_file = '{}/{}'.format(out_path, txt_filename)
 
 # Define the path for others
 model_path = Path(final_path) / 'model.tar'
-results_path = Path(final_path) / 'results.json'
-ae_results_path = Path(final_path) / 'ae_results.json'
-result_df_path = Path(final_path) / 'result_df.pkl'
 cut_95_path = Path(final_path) / 'cut_95.npy'
 cut_99_path = Path(final_path) / 'cut_99.npy'
 
 # Define additional stuffs
 device = 'cuda:{}'.format(device_no)
 eta = float(eta_str * 0.01)
+cut_95 = float(np.load(cut_95_path))
+cut_99 = float(np.load(cut_99_path))
 
 # Set random state
 torch.manual_seed(random_state)
-
-#############################################
-# 1. Model Training
-#############################################
-# Initialize data
-dataset = load_dataset(loader_name, root, normal_folder, abnormal_folder)
-
-# Load Deep SAD model
-if loader_name in ['deepsad', 'deepsad_unsupervised']:
-    # Define model
-    model = DeepSADModel(optimizer_, eta)
-    model.set_network(net_name)
-
-    # Load other models if specified
-    if load_model:
-        print('Loading model from {}'.format(load_model))
-        model.load_model(model_path=load_model,
-                         load_ae=True,
-                         map_location=device)
-    # Pretrain if specified
-    if pretrain:
-        print('I am pre-training for you.')
-        model.pretrain(dataset, optimizer_name, lr, ae_n_epochs, lr_milestones,
-                       batch_size, weight_decay, device, n_jobs_dataloader)
-        model.save_ae_results(export_json=ae_results_path)
-
-# Load Forecast model
-elif loader_name in ['forecast', 'forecast_unsupervised']:
-    model = ForecastModel(optimizer_, eta)
-    model.set_network(net_name)
-
-# Training model
-model.train(dataset, eta, optimizer_name, lr, n_epochs, lr_milestones,
-            batch_size, weight_decay, device, n_jobs_dataloader)
-
-
-#############################################
-# 2. Model Testing
-#############################################
-# Test and Save model
-model.test(dataset, device, n_jobs_dataloader)
-model.save_results(export_json=results_path)
-model.save_model(export_model=model_path, save_ae=save_ae)
-
-# Prepare to write the results
-indices, labels, scores = zip(*model.results['test_scores'])
-indices, labels, scores = np.array(indices), np.array(labels), np.array(scores)
-
-result_df = pd.DataFrame()
-result_df['indices'] = indices
-result_df['labels'] = labels
-result_df['scores'] = scores
-result_df.to_pickle(result_df_path)
-
-result_df.drop('indices', inplace=True, axis=1)
-df_normal = result_df[result_df.labels == 0]
-df_abnormal = result_df[result_df.labels == 1]
-
-# Save the threshold
-cut_95 = df_normal.scores.quantile(0.95)
-y_95 = [1 if e > cut_95 else 0 for e in df_abnormal['scores'].values]
-np.save(cut_95_path, cut_95)
-
-cut_99 = df_normal.scores.quantile(0.99)
-y_99 = [1 if e > cut_99 else 0 for e in df_abnormal['scores'].values]
-np.save(cut_99_path, cut_99)
-
-
-# Write the basic test file
-f = open(txt_result_file, 'a')
-f.write('############################################################\n')
-f.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-f.write('\n[DataFrame Name] {}\n'.format(result_df_path))
-f.write('[Normal Folder] {}\n'.format(normal_folder))
-f.write('[Abnormal Filename] {}\n'.format(abnormal_folder))
-f.write('[Model] {}\n'.format(optimizer_))
-f.write('[Eta] {}\n'.format(eta))
-f.write('[Epochs] {}\n'.format(n_epochs))
-f.write('[Cut Threshold with 0.05 FP Rate] {}\n'.format(cut_95))
-f.write('[Cut Threshold with 0.01 FP Rate] {}\n'.format(cut_99))
-if len(df_abnormal):
-    f.write('[A/N Ratio] 1:{}\n'.format(len(df_abnormal) / len(df_normal)))
-    f.write('[Recall for {} (FP = 0.05)] {}\n'.format('TEST', sum(y_95) / len(y_95)))
-    f.write('[Recall for {} (FP = 0.01)] {}\n'.format('TEST', sum(y_99) / len(y_99)))
-f.write('---------------------\n')
-f.close()
-
 
 #############################################
 # 3. Model Evaluation
@@ -242,7 +138,7 @@ l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_1.4G',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_5G',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_5G',]
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_5G']
 
 for root_abnormal in l_root_abnormal:
     print('I am starting evaluation for you.')
