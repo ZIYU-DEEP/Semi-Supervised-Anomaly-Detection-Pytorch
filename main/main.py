@@ -6,14 +6,14 @@ Author: Lek'Sai Ye, University of Chicago
 > For <supervised training>:
 python main.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 2
 python main.py -nf downtown -af downtown_sigOver_10ms -gpu 2
-python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 1
-python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 1
+python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 2
+python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 2
 
 > For <unsupervised training>:
-python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 3
-python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -af downtown_sigOver_10ms -gpu 3
-python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -af campus_drive_sigOver_10ms -gpu 3
-python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -af 871_ab_sigOver_5ms -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -gpu 1
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -gpu 3
+python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -gpu 2
 """
 
 #############################################
@@ -187,7 +187,17 @@ l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP2',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP3',
                    '/net/adv_spectrum/torch_data/{}/abnormal/{}_NLOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1']
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_1.4G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_5G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_1.4G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_5G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_1.4G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_5G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_1.4G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_5G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_1.4G',
+                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_5G',]
 
 for root_abnormal in l_root_abnormal:
     print('I am starting evaluation for you.')

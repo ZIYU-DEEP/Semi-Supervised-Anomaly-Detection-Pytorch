@@ -99,7 +99,6 @@ def file_to_Xs(filename, in_size=100, out_size=25, overlap=True, n_features=128,
                          shape --> (n_instances, out_size, n_features)
     """
     X = file_to_array(filename)
-    print(X.shape)
 
     if train == 1:
         X = X[:int(len(X) * train_portion)]
@@ -181,6 +180,7 @@ def folder_to_Xs_save(path, path_, in_size=100, out_size=25, overlap=True, n_fea
             print('Now I am concatenating the {}th file.'.format(i))
             full_in = np.concatenate((full_in, X_in))
             full_out = np.concatenate((full_out, X_out))
+            print(full_in.shape, full_out.shape)
 
     if train == 1:
         np.save(Path(path_) / 'X_train_in.npy', full_in)
@@ -214,7 +214,6 @@ def folder_to_Xs_save_deepsad(path, path_, window_size=100, n_features=128, trai
     if not os.path.exists(path_):
         os.makedirs(path_)
 
-    print(path)
     for i, filename in enumerate(sorted(glob.glob(path + '/*.txt'))):
         X = file_to_Xs_deepsad(filename, window_size, n_features, train_portion, train)
         if not i:
@@ -223,6 +222,7 @@ def folder_to_Xs_save_deepsad(path, path_, window_size=100, n_features=128, trai
         else:
             print('Now I am concatenating the {}th file.'.format(i))
             full_X = np.concatenate((full_X, X))
+            print(full_X.shape)
 
     if train == 1:
         np.save(Path(path_) / 'X_train.npy', full_X)
@@ -263,6 +263,7 @@ def save_abnormal_Xs(path, path_, in_size=100, out_size=25, overlap=False, n_fea
         print(path_out)
         np.save(path_out / 'X_in.npy', X_in)
         np.save(path_out / 'X_out.npy', X_out)
+        print(X_in.shape, X_out.shape)
     print('All files saved. Got to go to bed.')
 
     return True
