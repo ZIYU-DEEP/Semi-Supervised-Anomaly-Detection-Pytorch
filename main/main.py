@@ -38,6 +38,7 @@ from main_loading import *
 from main_network import *
 from main_model_forecast import *
 from main_model_deepsad import *
+from main_model_rec import *
 
 
 # Initialize the parser
@@ -46,11 +47,11 @@ parser.add_argument('--random_state', type=int, default=42)
 
 # Arguments for main_loading
 parser.add_argument('-ln', '--loader_name', type=str, default='forecast',
-                    help='[Choice]: forecast, ..._unsupervised, deepsad, ..._unsupervised')
+                    help='[Choice]: forecast, ..._unsupervised, deepsad, ..._unsupervised, rec, rec_unsupervised')
 parser.add_argument('-le', '--loader_eval_name', type=str, default='forecast_eval',
-                    help='forecast_eval, deepsad_eval')
+                    help='forecast_eval, deepsad_eval, rec_eval')
 parser.add_argument('-rt', '--root', type=str, default='/net/adv_spectrum/torch_data',
-                    help='[Choice]: .../torch_data, .../torch_data_deepsad/100')
+                    help='[Choice]: /net/adv_spectrum/torch_data, /net/adv_spectrum/torch_data_deepsad/100')
 parser.add_argument('-nf', '--normal_folder', type=str, default='downtown',
                     help='[Example]: downtown, ryerson_train, campus_drive')
 parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigOver_10ms',
@@ -58,7 +59,7 @@ parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigO
 
 # Arguments for main_network
 parser.add_argument('--net_name', type=str, default='lstm_stacked',
-                    help='[Choice]: lstm, lstm_stacked, lstm_autoencoder')
+                    help='[Choice]: lstm, lstm_stacked, lstm_autoencoder, rec')
 parser.add_argument('-rp', '--rep_dim', type=int, default=10,
                     help='Only apply to DeepSAD model - the latent dimension.')
 
@@ -68,7 +69,7 @@ parser.add_argument('-pt', '--pretrain', type=bool, default=True,
 parser.add_argument('--load_model', type=str, default='',
                     help='[Example]: ./deepsad_ryerson_train_ryerson_ab_train_sigOver_10ms/net_lstm_encoder_eta_100_epochs_100_batch_128/model.tar')
 parser.add_argument('-op', '--optimizer_', type=str, default='forecast_exp',
-                    help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus')
+                    help='[Choice]: forecast_unsupervised, forecast_exp, forecast_minus, rec, rec_unsupervised')
 parser.add_argument('-et', '--eta_str', default=100,
                     help='The _% representation of eta - choose from 100, 50, 25, etc.')
 parser.add_argument('--optimizer_name', type=str, default='adam')
@@ -104,6 +105,11 @@ txt_filename = p.txt_filename
 if loader_eval_name == 'forecast_eval':
     folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
     out_path = '/net/adv_spectrum/torch_models/forecast/{}'.format(folder_name)
+    final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
+                                                              n_epochs, batch_size)
+elif loader_eval_name == 'rec_eval':
+    folder_name = '{}_{}_{}'.format(optimizer_, normal_folder, abnormal_folder)
+    out_path = '/net/adv_spectrum/torch_models/rec/{}'.format(folder_name)
     final_path = '{}/net_{}_eta_{}_epochs_{}_batch_{}'.format(out_path, net_name, eta_str,
                                                               n_epochs, batch_size)
 
@@ -161,6 +167,10 @@ if loader_name in ['deepsad', 'deepsad_unsupervised']:
 # Load Forecast model
 elif loader_name in ['forecast', 'forecast_unsupervised']:
     model = ForecastModel(optimizer_, eta)
+    model.set_network(net_name)
+
+elif loader_name in ['rec', 'rec_unsupervised']:
+    model = RecModel(optimizer_, eta)
     model.set_network(net_name)
 
 # Training model
@@ -225,42 +235,54 @@ f.close()
 #############################################
 f = open(txt_result_file, 'a')
 
-l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_10ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_20ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP2',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP3',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_NLOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_5G',]
+l_root_abnormal = ['/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_5ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_10ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_20ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP2',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP3',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_NLOS-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_Dynamics-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_wn_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_wn_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_fsk_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_fsk_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_psk_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_psk_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_qam_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_qam_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_ofdm_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_ofdm_5G']
 
 for root_abnormal in l_root_abnormal:
+    # No bugs please.
     print('I am starting evaluation for you.')
     print('Abracadabra! Prajnaparamita! JI-JI-RU-LV-LING!')
+
+    # Formating the path
+    if loader_eval_name in ['forecast_eval']: mid_root = 'torch_data'
+    else: mid_root = 'torch_data_deepsad/100'
 
     if normal_folder == 'ryerson_train': normal_folder_ = 'ryerson_ab_train'
     elif normal_folder == '871': normal_folder_ = '871_ab'
     else: normal_folder_ = normal_folder
 
-    root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
+    root_abnormal = root_abnormal.format(mid_root, normal_folder, normal_folder_)
 
-    if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
-                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
+    # if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
+    #                      '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms',
+    #                      '/net/adv_spectrum/torch_data_deepsad/100/871/abnormal/871_ab_sigOver_10ms',
+    #                      '/net/adv_spectrum/torch_data_deepsad/100/871/abnormal/871_ab_sigOver_20ms',]:
+    #     continue
+
+    if not os.path.exists(root_abnormal):
+        print('Skip {}!'.format(root_abnormal))
         continue
 
     f.write('============================================================\n')
     f.write('Results for {}:\n'.format(root_abnormal))
 
+    # Start evaluating
     total_recall_95 = []
     total_recall_99 = []
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):
@@ -275,6 +297,8 @@ for root_abnormal in l_root_abnormal:
             model_eval = ForecastModelEval(optimizer_, eta=eta)
         elif loader_eval_name in ['deepsad_eval']:
             model_eval = DeepSADModelEval(optimizer_, eta=eta)
+        elif loader_eval_name in ['rec_eval']:
+            model_eval = RecModelEval(optimizer_, eta=eta)
 
         model_eval.set_network(net_name)
         model_eval.load_model(model_path=model_path, map_location=device)

@@ -6,6 +6,7 @@ Author: Lek'Sai Ye, University of Chicago
 
 from deepsad_loader import DeepSADLoader, DeepSADLoaderUnsupervised, DeepSADLoaderEval
 from forecast_loader import ForecastLoader, ForecastLoaderUnsupervised, ForecastLoaderEval
+from rec_loader import RecLoader, RecLoaderUnsupervised, RecLoaderEval
 
 
 def load_dataset(loader_name: str='forecast',
@@ -14,7 +15,8 @@ def load_dataset(loader_name: str='forecast',
                  abnormal_folder: str='downtown_sigOver_10ms'):
 
     known_loaders = ('forecast', 'forecast_unsupervised', 'forecast_eval',
-                     'deepsad', 'deepsad_unsupervised', 'deepsad_eval')
+                     'deepsad', 'deepsad_unsupervised', 'deepsad_eval',
+                     'rec', 'rec_unsupervised', 'rec_eval')
     assert loader_name in known_loaders
 
     if loader_name == 'forecast':
@@ -42,5 +44,18 @@ def load_dataset(loader_name: str='forecast',
         # But no worries, as you do not need to manually specify them
         # main_evaluate.py / main.py will auto-fill in the root
         return DeepSADLoaderEval(root)
+
+    if loader_name == 'rec':
+        return RecLoader(root, normal_folder, abnormal_folder)
+
+    if loader_name == 'rec_unsupervised':
+        return RecLoaderUnsupervised(root, normal_folder)
+
+    if loader_name == 'rec_eval':
+        # In this case, root should be something different, like:
+        # '/net/adv_spectrum/torch_data/downtown/abnormal/downtown_LOS-5M-USRP1/file_0'
+        # But no worries, as you do not need to manually specify them
+        # main_evaluate.py / main.py will auto-fill in the root
+        return RecLoaderEval(root)
 
     return None

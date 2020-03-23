@@ -121,42 +121,48 @@ torch.manual_seed(random_state)
 #############################################
 f = open(txt_result_file, 'a')
 
-l_root_abnormal = ['/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_5ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_10ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_sigOver_20ms',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP2',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_LOS-5M-USRP3',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_NLOS-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_Dynamics-5M-USRP1',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_wn_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_fsk_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_psk_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_qam_5G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_1.4G',
-                   '/net/adv_spectrum/torch_data/{}/abnormal/{}_ofdm_5G']
+l_root_abnormal = ['/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_5ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_10ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_sigOver_20ms',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP2',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_LOS-5M-USRP3',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_NLOS-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_Dynamics-5M-USRP1',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_wn_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_wn_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_fsk_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_fsk_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_psk_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_psk_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_qam_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_qam_5G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_ofdm_1.4G',
+                   '/net/adv_spectrum/{}/{}/abnormal/{}_ofdm_5G']
 
 for root_abnormal in l_root_abnormal:
+    # No bugs please.
     print('I am starting evaluation for you.')
     print('Abracadabra! Prajnaparamita! JI-JI-RU-LV-LING!')
+
+    # Formating the path
+    if loader_eval_name in ['forecast_eval']: mid_root = 'torch_data'
+    else: mid_root = 'torch_data_deepsad/100'
 
     if normal_folder == 'ryerson_train': normal_folder_ = 'ryerson_ab_train'
     elif normal_folder == '871': normal_folder_ = '871_ab'
     else: normal_folder_ = normal_folder
 
-    root_abnormal = root_abnormal.format(normal_folder, normal_folder_)
+    root_abnormal = root_abnormal.format(mid_root, normal_folder, normal_folder_)
 
-    if root_abnormal in ['/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_10ms',
-                         '/net/adv_spectrum/torch_data/871/abnormal/871_ab_sigOver_20ms']:
+    if not os.path.exists(root_abnormal):
+        print('Skip {}!'.format(root_abnormal))
         continue
 
     f.write('============================================================\n')
     f.write('Results for {}:\n'.format(root_abnormal))
 
+    # Start evaluating
     total_recall_95 = []
     total_recall_99 = []
     for i, folder in enumerate(sorted(glob.glob(root_abnormal + '/file*'))):

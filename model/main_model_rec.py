@@ -6,23 +6,22 @@ Reference: https://github.com/lukasruff/Deep-SAD-PyTorch/tree/master/src/DeepSAD
 """
 
 import sys
+sys.path.append('../network/')
+
 import torch
 import json
-from forecast_exp_optimizer import ForecastTrainerExp, ForecastEvaluaterExp
-from forecast_minus_optimizer import ForecastTrainerMinus, ForecastEvaluaterMinus
-from forecast_unsupervised_optimizer import ForecastTrainer_, ForecastEvaluater_
-sys.path.append('../network/')
 from main_network import build_network
+from rec_optimizer import RecTrainer, RecTrainer_, RecEvaluater
 
 
 # --------------------------------------------
 # 3.3. (a) Model Object for training
 # --------------------------------------------
-class ForecastModel:
+class RecModel:
     def __init__(self,
-                 optimizer_: str = 'forecast_exp',
+                 optimizer_: str = 'rec',
                  eta: float = 1.0):
-        known_optimizer_ = ('forecast_exp', 'forecast_minus', 'forecast_unsupervised')
+        known_optimizer_ = ('rec', 'rec_unsupervised')
         assert optimizer_ in known_optimizer_
         self.optimizer_ = optimizer_
         self.eta = eta
@@ -44,15 +43,12 @@ class ForecastModel:
         print('Learning rate: {}'.format(lr))
         self.optimizer_name = optimizer_name
 
-        if self.optimizer_ == 'forecast_exp':
-            self.trainer = ForecastTrainerExp(eta, optimizer_name, lr, n_epochs, lr_milestones,
-                                              batch_size, weight_decay, device, n_jobs_dataloader)
-        if self.optimizer_ == 'forecast_minus':
-            self.trainer = ForecastTrainerMinus(eta, optimizer_name, lr, n_epochs, lr_milestones,
-                                                batch_size, weight_decay, device, n_jobs_dataloader)
-        if self.optimizer_ == 'forecast_unsupervised':
-            self.trainer = ForecastTrainer_(eta, optimizer_name, lr, n_epochs, lr_milestones,
-                                            batch_size, weight_decay, device, n_jobs_dataloader)
+        if self.optimizer_ == 'rec':
+            self.trainer = RecTrainer(eta, optimizer_name, lr, n_epochs, lr_milestones,
+                                      batch_size, weight_decay, device, n_jobs_dataloader)
+        if self.optimizer_ == 'rec_unsupervised':
+            self.trainer = RecTrainer_(eta, optimizer_name, lr, n_epochs, lr_milestones,
+                                       batch_size, weight_decay, device, n_jobs_dataloader)
 
         self.net = self.trainer.train(dataset, self.net)
         self.results['train_time'] = self.trainer.train_time
@@ -80,11 +76,11 @@ class ForecastModel:
 # --------------------------------------------
 # 3.3. (b) Model Object for Evaluating
 # --------------------------------------------
-class ForecastModelEval:
+class RecModelEval:
     def __init__(self,
                  optimizer_,
                  eta: float = 1.0):
-        known_optimizer_ = ('forecast_exp', 'forecast_minus', 'forecast_unsupervised')
+        known_optimizer_ = ('rec', 'rec_unsupervised')
         assert optimizer_ in known_optimizer_
         self.optimizer_ = optimizer_
         self.eta = eta
@@ -109,14 +105,9 @@ class ForecastModelEval:
              n_jobs_dataloader: int = 0):
 
         if self.evaluater is None:
-            if self.optimizer_ == 'forecast_exp':
-                self.evaluater = ForecastEvaluaterExp(eta, batch_size, device, n_jobs_dataloader)
-            if self.optimizer_ == 'forecast_minus':
-                self.evaluater = ForecastEvaluaterMinus(eta, batch_size, device, n_jobs_dataloader)
-            if self.optimizer_ == 'forecast_unsupervised':
-                self.evaluater = ForecastEvaluater_(eta, batch_size, device, n_jobs_dataloader)
+            self.evaluater = RecEvaluater(eta, batch_size, device, n_jobs_dataloader)
 
-        self.evaluater.test(dataset, self.net)
+        self.evaluater.test(self.optimizer_, dataset, self.net)
         self.results['test_time'] = self.evaluater.test_time
         self.results['test_scores'] = self.evaluater.test_scores
 
