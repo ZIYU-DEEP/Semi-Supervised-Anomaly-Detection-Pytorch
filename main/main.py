@@ -3,17 +3,7 @@
 [Description] The main file to run the unsupervised models.
 [Author] Lek'Sai Ye, University of Chicago
 [Example Command]
-> For <supervised training>:
->>> python main.py -nf ryerson_train -af ryerson_ab_train_sigOver_10ms -gpu 2
->>> python main.py -nf downtown -af downtown_sigOver_10ms -gpu 2
->>> python main.py -nf campus_drive -af campus_drive_sigOver_10ms -gpu 2
->>> python main.py -nf 871 -af 871_ab_sigOver_5ms -gpu 2
-
-> For <unsupervised training>:
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf ryerson_train -gpu 1
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf downtown -gpu 3
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf campus_drive -gpu 3
->>> python main.py -ln forecast_unsupervised -op forecast_unsupervised -nf 871 -gpu 2
+> Python main.py -ln rec_unsupervised -le rec_eval -nt rec -op rec_unsupervised -nf downtown -af _ -rt /net/adv_spectrum/torch_data_deepsad/100 -gpu 1
 """
 
 #############################################
@@ -58,7 +48,7 @@ parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigO
                     help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
 # Arguments for main_network
-parser.add_argument('--net_name', type=str, default='lstm_stacked',
+parser.add_argument('-nt', '--net_name', type=str, default='lstm_stacked',
                     help='[Choice]: lstm, lstm_stacked, lstm_autoencoder, rec')
 parser.add_argument('-rp', '--rep_dim', type=int, default=10,
                     help='Only apply to DeepSAD model - the latent dimension.')

@@ -55,7 +55,7 @@ parser.add_argument('-af', '--abnormal_folder', type=str, default='downtown_sigO
                     help='[Example]: _, downtown_sigOver_10ms, downtown_sigOver_5ms')
 
 # Arguments for main_network
-parser.add_argument('--net_name', type=str, default='lstm_stacked',
+parser.add_argument('-nt', '--net_name', type=str, default='lstm_stacked',
                     help='[Choice]: lstm, lstm_stacked, lstm_autoencoder')
 
 # Arguments for main_model
