@@ -312,7 +312,7 @@ class RecEvaluater(BaseEvaluater):
                 if optimizer_ == 'rec':
                     losses = torch.where(y == 0,
                                          dist,
-                                         self.eta * ((dist + self.eps) **(- 1)))
+                                         self.eta * ((dist) ** (- 1)))
                 else:
                     losses = dist
                 loss = torch.mean(losses)
