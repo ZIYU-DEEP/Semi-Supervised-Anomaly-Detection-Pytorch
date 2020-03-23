@@ -15,12 +15,14 @@ class RecEncoder(BaseNet):
         super().__init__()
 
         self.rep_dim = rep_dim
-        self.lstm1 = nn.LSTM(128, 64, num_layers=3, batch_first=True)
-        self.fc1 = nn.Linear(64 * 100, self.rep_dim, bias=False)
+        self.lstm1 = nn.LSTM(128, 64, batch_first=True)
+        self.lstm2 = nn.LSTM(64, 32, batch_first=True)
+        self.fc1 = nn.Linear(32 * 100, self.rep_dim, bias=False)
 
     def forward(self, x):
         x, _ = self.lstm1(x)
-        x = x.reshape(x.size(0), 64 * 100).contiguous()
+        x, _ = self.lstm2(x)
+        x = x.reshape(x.size(0), 32 * 100).contiguous()
         x = self.fc1(x)
         return x
 
@@ -33,13 +35,15 @@ class RecDecoder(BaseNet):
         self.rep_dim = rep_dim
 
         # Decoder network
-        self.lstm1 = nn.LSTM(64, 128, num_layers=3, batch_first=True)
-        self.fc1 = nn.Linear(self.rep_dim, 64 * 100)
+        self.lstm1 = nn.LSTM(32, 64, batch_first=True)
+        self.lstm2 = nn.LSTM(64, 128, batch_first=True)
+        self.fc1 = nn.Linear(self.rep_dim, 32 * 100)
 
     def forward(self, x):
         x = self.fc1(x)
-        x = x.view(x.size(0), 100, 64).contiguous()
+        x = x.view(x.size(0), 100, 32).contiguous()
         x, _ = self.lstm1(x)
+        x, _ = self.lstm2(x)
         x = torch.sigmoid(x)
         return x
 

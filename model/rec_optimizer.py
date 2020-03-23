@@ -257,7 +257,7 @@ class RecTrainer_(BaseTrainer):
         _, labels, scores = zip(*idx_label_score)
         labels = np.array(labels)
         scores = np.array(scores)
-        self.test_auc = roc_auc_score(labels, scores)
+        # self.test_auc = roc_auc_score(labels, scores)
 
         # Log results
         # print('Test Loss: {:.6f}'.format(epoch_loss / n_batches))

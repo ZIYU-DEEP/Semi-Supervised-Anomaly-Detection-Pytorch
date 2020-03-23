@@ -3,7 +3,7 @@
 [Description] The main file to run the unsupervised models.
 [Author] Lek'Sai Ye, University of Chicago
 [Example Command]
-> Python main.py -ln rec_unsupervised -le rec_eval -nt rec -op rec_unsupervised -nf downtown -af _ -rt /net/adv_spectrum/torch_data_deepsad/100 -gpu 1
+> python main.py -ln rec_unsupervised -le rec_eval -nt rec -op rec_unsupervised -nf downtown -af _ -rt /net/adv_spectrum/torch_data_deepsad/100 -gpu 1
 """
 
 #############################################
